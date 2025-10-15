@@ -268,8 +268,8 @@
                                 alt: proj.name,
                                 className: 'w-full h-24 object-cover rounded mb-2'
                             }),
-                            React.createElement('h3', { className: 'font-semibold text-sm' }, proj.name),
-                            React.createElement('p', { className: 'text-xs text-gray-600 line-clamp-2' }, proj.description)
+                            React.createElement('h3', { className: 'font-semibold text-sm truncate' }, proj.name),
+                            React.createElement('p', { className: 'text-xs text-gray-600 line-clamp-2 overflow-hidden' }, proj.description)
                         )
                     )
                 ),
