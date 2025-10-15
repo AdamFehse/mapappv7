@@ -1,6 +1,7 @@
 # Ignore everything except the app files
 /*
 !.gitignore
+!.nojekyll
 !index.html
 !App.js
 !config.js
