@@ -2,6 +2,8 @@
 
 An interactive story map application built with React, Leaflet, and Swiper. This app displays projects on a map with rich details, artwork galleries, and interactive popups.
 
+DEMO: https://adamfehse.github.io/mapappv7/
+
 ## Features
 
 - **Interactive Map**: Leaflet-based map with marker clustering
