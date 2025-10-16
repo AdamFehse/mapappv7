@@ -2,7 +2,6 @@
 
 An interactive story map application built with React, Leaflet, and Keen Slider. This app displays projects on a map with rich details, artwork galleries, and interactive popups.
 
-**DEMO:** https://adamfehse.github.io/mapappv7/
 
 ## Features
 
@@ -28,39 +27,6 @@ This app is deployed to GitHub Pages at: `https://adamfehse.github.io/mapappv7/`
 - **Tailwind CSS**
 - **ColorUtils** - Centralized color palette system
 
-## Local Development
-
-### Quick Start (CDN Version)
-Simply open `index.html` in a browser. All dependencies are loaded from CDNs.
-
-```bash
-# Using Python
-python -m http.server 8000
-
-# Or using Node
-npx http-server
-```
-
-### Production Build (Vite - Optional)
-For optimized bundle sizes and faster load times:
-
-```bash
-# Install dependencies (first time only)
-npm install
-
-# Run dev server with hot reload
-npm run dev
-
-# Build for production (outputs to dist/)
-npm run build
-```
-
-**Benefits of Vite build:**
-- 50% smaller bundle size (~200KB vs ~400KB)
-- Code splitting and tree shaking
-- Fast dev server with hot module replacement
-- Optimized for production deployment
-
 ## Project Structure
 
 ```
@@ -78,18 +44,6 @@ npm run build
 ├── package.json            # NPM dependencies (for Vite build)
 └── vite.config.js          # Vite bundler configuration
 ```
-
-## Recent Optimizations
-
-- ✅ **Removed Swiper** - Now uses only Keen Slider (saved ~100KB)
-- ✅ **Removed Animate.css** - Unused library (saved ~50KB)
-- ✅ **Consolidated Colors** - Single color system for consistency
-- ✅ **Production React** - Smaller, faster React builds
-- ✅ **URL Routing** - Shareable project links via hash routing
-- ✅ **Expanded Search** - Search across all project fields
-- ✅ **Result Counter** - See filtered vs total project count
-
-**Total size reduction: ~150KB + faster page loads**
 
 ## License
 

@@ -71,7 +71,7 @@
             React.createElement('div', {
                 ref: sliderRef,
                 className: 'keen-slider thumbnail cursor-pointer',
-                style: { height: '120px' }
+                style: { height: '100px' }
             },
                 projects.map((proj) => {
                     // Find the project's index in the FULL allProjects array for consistent coloring
@@ -79,16 +79,16 @@
                     const gradientStyle = colorUtils.getGradientStyle(projectIndex >= 0 ? projectIndex : 0);
                     return React.createElement('div', {
                         key: `thumb-${proj.id}`,
-                        className: 'keen-slider__slide flex flex-col items-center justify-start p-2 rounded-lg cursor-pointer border-2 border-transparent transition-all hover:opacity-90',
+                        className: 'keen-slider__slide flex flex-col items-center justify-start p-1 rounded cursor-pointer border-2 border-transparent transition-all hover:opacity-90',
                         style: gradientStyle,
                         onClick: () => onSelect(proj)
                     },
                         proj.image && React.createElement('img', {
                             src: proj.image,
                             alt: proj.name,
-                            className: 'w-full h-20 object-contain rounded mb-1.5 bg-white/20 p-1'
+                            className: 'w-full h-16 object-cover rounded mb-1'
                         }),
-                        React.createElement('span', { className: 'text-xs font-semibold truncate w-full text-center leading-tight text-white' }, proj.name)
+                        React.createElement('span', { className: 'text-xs font-medium truncate w-full text-center text-white px-1' }, proj.name)
                     );
                 })
             ),
