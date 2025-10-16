@@ -266,9 +266,9 @@
                             proj.image && React.createElement('img', {
                                 src: proj.image,
                                 alt: proj.name,
-                                className: 'w-full h-24 object-cover rounded mb-2'
+                                className: 'w-full h-16 sm:h-20 md:h-24 object-cover rounded mb-2'
                             }),
-                            React.createElement('h3', { className: 'font-semibold text-sm truncate' }, proj.name),
+                            React.createElement('h3', { className: 'font-semibold text-xs sm:text-sm truncate' }, proj.name),
                             React.createElement('p', { className: 'text-xs text-gray-600 line-clamp-2 overflow-hidden' }, proj.description)
                         )
                     )
@@ -282,18 +282,18 @@
     // Main Sidebar Component
     window.StoryMapComponents.Sidebar = function Sidebar({ projects, selected, onSelect, onSearch }) {
         return React.createElement('div', 
-            { className: 'flex flex-col h-full space-y-4' },
+            { className: 'flex flex-col h-full space-y-2 sm:space-y-4' },
             // Project details panel
             React.createElement('div', 
-                { className: 'bg-white rounded-lg shadow flex-grow overflow-hidden' },
+                { className: 'bg-white rounded-lg shadow flex-grow overflow-hidden min-h-0' },
                 React.createElement(ProjectDetail, { project: selected })
             ),
             // Search and carousel
             React.createElement('div', 
-                { className: 'space-y-2' },
+                { className: 'space-y-2 flex-shrink-0' },
                 React.createElement(SearchBar, { onSearch: onSearch }),
                 React.createElement('div', 
-                    { className: 'bg-white rounded-lg shadow p-4 h-48' },
+                    { className: 'bg-white rounded-lg shadow p-2 sm:p-4 h-32 sm:h-40 md:h-48' },
                     React.createElement(ProjectCarousel, {
                         projects: projects,
                         onSelect: onSelect,

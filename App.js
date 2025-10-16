@@ -54,18 +54,18 @@
         }
 
         return React.createElement('div', 
-            { className: 'flex h-screen p-4 gap-4 bg-gray-100' },
-            // Map (2/3 width)
+            { className: 'flex flex-col lg:flex-row h-screen p-2 sm:p-4 gap-2 sm:gap-4 bg-gray-100' },
+            // Map - full width on mobile, 2/3 on desktop
             React.createElement('div', 
-                { className: 'w-2/3' },
+                { className: 'w-full lg:w-2/3 h-1/2 lg:h-full' },
                 React.createElement(MapContainer, {
                     projects: filtered,
                     onMapReady: handleMapReady
                 })
             ),
-            // Sidebar (1/3 width)
+            // Sidebar - full width on mobile, 1/3 on desktop
             React.createElement('div', 
-                { className: 'w-1/3' },
+                { className: 'w-full lg:w-1/3 h-1/2 lg:h-full' },
                 React.createElement(Sidebar, {
                     projects: filtered,
                     selected: selected,
