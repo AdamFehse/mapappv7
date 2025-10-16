@@ -7,24 +7,35 @@
   
   <!-- Styles -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css" />
   
   <!-- Libraries -->
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <!-- Keen Slider (ESM import for carousel and popup galleries) -->
+  <script type="module">
+    import keenSlider from 'https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/+esm';
+    window.keenSlider = keenSlider;
+  </script>
   
   <!-- App Scripts -->
   <script src="./config.js"></script>
+  <script src="./ColorUtils.js"></script>
   <script src="./MapUtils.js"></script>
   <script src="./MapContainer.js"></script>
+  <!-- Sidebar Components (modular) -->
+  <script src="./ProjectDetail.js"></script>
+  <script src="./ProjectCarousel.js"></script>
+  <script src="./SearchBar.js"></script>
   <script src="./Sidebar.js"></script>
+  <!-- Centralized filter logic (must be before App.js) -->
+  <script src="./ProjectFilter.js"></script>
   <script src="./App.js"></script>
 </head>
 

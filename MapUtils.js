@@ -3,7 +3,7 @@
     window.StoryMapComponents = window.StoryMapComponents || {};
 
     // Create popup HTML for a project, with Swiper gallery if multiple images
-    function createPopup(proj) {
+    function createPopup(proj, colorGradient) {
         // Gather all images: ImageUrl, proj.image, artworks
         const images = [];
         if (proj.raw?.ImageUrl) images.push({ url: proj.raw.ImageUrl, alt: proj.raw.ProjectName || proj.name });
@@ -16,23 +16,48 @@
 
         let galleryHtml = '';
         if (images.length > 1) {
-            // Swiper gallery
+            // Keen Slider gallery with navigation dots
+            const uniqueId = `popup-slider-${Math.random().toString(36).substr(2, 9)}`;
             galleryHtml = `
-                <div class="swiper popup-swiper mb-1" style="width:100%;height:90px;">
-                    <div class="swiper-wrapper">
-                        ${images.map(img => `<div class="swiper-slide flex items-center justify-center"><img src="${img.url}" alt="${img.alt}" class="h-20 max-w-full object-contain rounded"/></div>`).join('')}
-                    </div>
-                    <div class="swiper-pagination"></div>
+                <div id="${uniqueId}" class="keen-slider mb-1" style="width:100%;height:90px;">
+                    ${images.map(img => `<div class="keen-slider__slide flex items-center justify-center"><img src="${img.url}" alt="${img.alt}" class="h-20 max-w-full object-contain rounded"/></div>`).join('')}
                 </div>
+                <div id="${uniqueId}-dots" class="dots flex justify-center gap-1 mb-1"></div>
                 <script>
                 setTimeout(function() {
-                  if (window.Swiper) {
-                    new window.Swiper('.popup-swiper', {
-                      slidesPerView: 1,
-                      pagination: { el: '.popup-swiper .swiper-pagination', clickable: true },
+                  if (window.keenSlider) {
+                    var slider = new window.keenSlider('#${uniqueId}', {
                       loop: true,
-                      autoHeight: true
+                      slides: { perView: 1 }
                     });
+
+                    // Create navigation dots
+                    var dotsContainer = document.getElementById('${uniqueId}-dots');
+                    var totalSlides = ${images.length};
+                    for (var i = 0; i < totalSlides; i++) {
+                      var dot = document.createElement('button');
+                      dot.className = 'w-2 h-2 rounded-full bg-white opacity-50 hover:opacity-75 transition-opacity';
+                      dot.onclick = (function(idx) {
+                        return function() { slider.moveToIdx(idx); };
+                      })(i);
+                      dotsContainer.appendChild(dot);
+                    }
+
+                    // Update active dot
+                    function updateDots(idx) {
+                      var dots = dotsContainer.children;
+                      for (var j = 0; j < dots.length; j++) {
+                        dots[j].className = j === idx
+                          ? 'w-2 h-2 rounded-full bg-white opacity-100 transition-opacity'
+                          : 'w-2 h-2 rounded-full bg-white opacity-50 hover:opacity-75 transition-opacity';
+                      }
+                    }
+
+                    slider.on('slideChanged', function(s) {
+                      updateDots(s.track.details.rel);
+                    });
+
+                    updateDots(0);
                   }
                 }, 0);
                 </script>
@@ -42,18 +67,27 @@
         }
 
         return `
-            <div class="p-1" style="min-width:180px;max-width:240px;">
+            <div class="p-2 rounded-lg" style="min-width:200px;max-width:260px;background:${colorGradient};">
                 ${galleryHtml}
-                <div class="font-bold text-base mb-1">${proj.name || ''}</div>
-                <div class="text-xs text-gray-700 mb-1">${proj.description || ''}</div>
-                ${proj.raw?.Location ? `<div class="text-xs text-gray-500">${proj.raw.Location}</div>` : ''}
+                <div class="font-bold text-base mb-1 text-white">${proj.name || ''}</div>
+                <div class="text-sm text-white opacity-90 mb-1">${proj.description || ''}</div>
+                ${proj.raw?.Location ? `<div class="text-xs text-white opacity-75">${proj.raw.Location}</div>` : ''}
             </div>
         `;
     }
 
     // Create a Leaflet marker for a project
-    function createMarker(proj) {
+    function createMarker(proj, allProjects, onMarkerClick) {
         if (!proj.raw?.Latitude || !proj.raw?.Longitude) return null;
+
+        // Find the project's index in the FULL allProjects array for consistent coloring
+        const projectIndex = allProjects ? allProjects.findIndex(p => p.id === proj.id) : 0;
+        const index = projectIndex >= 0 ? projectIndex : 0;
+
+        // Get the color gradient for this project
+        const colorUtils = window.ColorUtils;
+        const gradientCSS = colorUtils ? colorUtils.getGradientCSS(index) : 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)';
+        const borderColor = colorUtils ? colorUtils.getStartColor(index) : '#3b82f6';
 
         const options = proj.image ? {
             icon: L.icon({
@@ -61,26 +95,38 @@
                 iconSize: [40, 40],
                 iconAnchor: [20, 40],
                 popupAnchor: [0, -36],
-                className: 'border-2 border-white shadow-lg rounded-full object-contain bg-white'
+                className: `border-2 shadow-lg rounded-full object-contain bg-white`,
+                // Use inline style for colored border
+                html: `<img src="${proj.image}" class="w-full h-full rounded-full object-cover" style="border:3px solid ${borderColor}"/>`
             })
         } : {};
 
         const marker = L.marker([proj.raw.Latitude, proj.raw.Longitude], options);
-        marker.bindPopup(createPopup(proj));
+        marker.bindPopup(createPopup(proj, gradientCSS));
+
+        // Add click handler to update app state when marker is clicked
+        if (typeof onMarkerClick === 'function') {
+            marker.on('click', () => {
+                onMarkerClick(proj);
+            });
+        }
+
         return marker;
     }
 
     // Create and configure marker cluster group
     function createClusterGroup() {
         if (!L.markerClusterGroup) return null;
-        
+
         return L.markerClusterGroup({
             showCoverageOnHover: true,
             zoomToBoundsOnClick: true,
             spiderfyOnMaxZoom: true,
             animate: true,
-            disableClusteringAtZoom: 16,
-            maxClusterRadius: 80,
+            animateAddingMarkers: false, // Faster rendering
+            disableClusteringAtZoom: 14, // Decluster earlier (was 16)
+            maxClusterRadius: 60, // Smaller cluster radius for better separation (was 80)
+            spiderfyDistanceMultiplier: 1.5, // More spread when spiderfying
             iconCreateFunction: cluster => L.divIcon({
                 html: `<span class='font-bold text-lg text-white'>${cluster.getChildCount()}</span>`,
                 className: 'bg-blue-600 flex items-center justify-center rounded-full shadow-lg',

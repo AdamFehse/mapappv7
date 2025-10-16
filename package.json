@@ -1,0 +1,22 @@
+{
+  "name": "story-map-app",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Interactive Story Map with React and Leaflet",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
+    "keen-slider": "^6.8.6"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.0.0"
+  }
+}
