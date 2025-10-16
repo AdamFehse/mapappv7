@@ -17,7 +17,7 @@ An interactive story map application built with React, Leaflet, and Keen Slider.
 
 ## GitHub Pages Deployment
 
-This app is deployed to GitHub Pages at: `https://adamfehse.github.io/mapappv7/`
+This app is deployed to GitHub Pages at: [DEMO](https://adamfehse.github.io/mapappv7/) 
 
 ## Technologies
 
