@@ -10,25 +10,21 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css" />
   
   <!-- Libraries -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
-  <!-- Keen Slider (ESM import for carousel and popup galleries) -->
-  <script type="module">
-    import keenSlider from 'https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/+esm';
-    window.keenSlider = keenSlider;
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/embla-carousel@8.1.0/embla-carousel.umd.min.js"></script>
+  <script src="https://unpkg.com/embla-carousel-wheel-gestures@8.1.0/dist/embla-carousel-wheel-gestures.umd.js"></script>
   
   <!-- App Scripts -->
   <script src="./config.js"></script>
   <script src="./ColorUtils.js"></script>
   <script src="./MapUtils.js"></script>
   <script src="./MapContainer.js"></script>
+  <script src="./SplitLayout.js"></script>
   <!-- Sidebar Components (modular) -->
   <script src="./ProjectDetail.js"></script>
   <script src="./ProjectCarousel.js"></script>

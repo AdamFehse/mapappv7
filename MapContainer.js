@@ -199,10 +199,19 @@
 
         // Notify parent when map is ready - separate effect to avoid re-running
         useEffect(() => {
-            if (onMapReady && markersRef.current.length > 0) {
-                onMapReady(showProject.current);
-            }
-        }, [projects, onMapReady]);
+            if (typeof onMapReady !== 'function') return;
+            const mapInstance = leafletMapRef.current;
+            if (!mapInstance) return;
+            onMapReady({
+                showProject: showProject.current,
+                invalidateSize: () => {
+                    const map = leafletMapRef.current;
+                    if (map) {
+                        map.invalidateSize({ animate: false });
+                    }
+                }
+            });
+        }, [onMapReady, projects.length]);
 
         return React.createElement('div', {
             ref: mapRef,

@@ -10,7 +10,8 @@
         const [filterCriteria, setFilterCriteria] = useState({ search: '' });
         const [loading, setLoading] = useState(!window.projectData?.length);
         const [visibleProjects, setVisibleProjects] = useState([]);
-        const showProjectOnMap = React.useRef(null);
+        const mapApiRef = React.useRef({ showProject: null, invalidateSize: null });
+        const resizeFrameRef = React.useRef(null);
 
         // URL routing: Read hash on mount and listen for changes
         useEffect(() => {
@@ -21,8 +22,8 @@
                     const project = projects.find(p => p.id === projectId);
                     if (project) {
                         setSelected(project);
-                        if (showProjectOnMap.current) {
-                            showProjectOnMap.current(project);
+                        if (mapApiRef.current?.showProject) {
+                            mapApiRef.current.showProject(project);
                         }
                     }
                 }
@@ -60,12 +61,13 @@
 
         const MapContainer = window.StoryMapComponents.MapContainer;
         const Sidebar = window.StoryMapComponents.Sidebar;
+        const DraggableSplit = window.StoryMapComponents.DraggableSplit;
 
         // Handle project selection - call map function directly and update URL
         function handleSelectProject(project) {
             setSelected(project);
-            if (showProjectOnMap.current) {
-                showProjectOnMap.current(project);
+            if (mapApiRef.current?.showProject) {
+                mapApiRef.current.showProject(project);
             }
             // Update URL hash for shareable links
             if (project) {
@@ -81,41 +83,64 @@
         }
 
         // Store the map's showProject function
-        function handleMapReady(showProjectFn) {
-            showProjectOnMap.current = showProjectFn;
+        function handleMapReady(api) {
+            mapApiRef.current = api || {};
+            if (mapApiRef.current.invalidateSize) {
+                mapApiRef.current.invalidateSize();
+            }
         }
+
+        // Ensure pending resize callbacks are cleared on unmount
+        useEffect(() => {
+            return () => {
+                if (resizeFrameRef.current) {
+                    cancelAnimationFrame(resizeFrameRef.current);
+                    resizeFrameRef.current = null;
+                }
+            };
+        }, []);
 
         // Handle filter changes (e.g. from SearchBar)
         function handleFilterChange(newCriteria) {
             setFilterCriteria(prev => ({ ...prev, ...newCriteria }));
         }
 
+        function handleSplitResize() {
+            if (!mapApiRef.current?.invalidateSize) return;
+            if (resizeFrameRef.current) return;
+            resizeFrameRef.current = requestAnimationFrame(() => {
+                resizeFrameRef.current = null;
+                mapApiRef.current.invalidateSize();
+            });
+        }
+
         return React.createElement('div', 
-            { className: 'flex flex-col lg:flex-row h-screen p-2 sm:p-4 gap-2 sm:gap-4 bg-gray-100' },
-            // Map - full width on mobile, 2/3 on desktop
-            React.createElement('div',
-                { className: 'w-full lg:w-2/3 h-1/2 lg:h-full' },
-                React.createElement(MapContainer, {
-                    projects: filtered,
-                    allProjects: projects,
-                    onMapReady: handleMapReady,
-                    onVisibleProjectsChange: setVisibleProjects,
-                    onPopupClose: handleDeselectProject,
-                    onMarkerClick: handleSelectProject
-                })
-            ),
-            // Sidebar - full width on mobile, 1/3 on desktop
-            React.createElement('div',
-                { className: 'w-full lg:w-1/3 h-1/2 lg:h-full' },
-                React.createElement(Sidebar, {
-                    projects: visibleProjects.length ? visibleProjects : filtered,
-                    allProjects: projects, // Pass all projects for color index calculation
-                    selected: selected,
-                    onSelect: handleSelectProject,
-                    onSearch: search => handleFilterChange({ search }),
-                    onDeselect: handleDeselectProject
-                })
-            )
+            { className: 'h-screen p-2 sm:p-4 bg-gray-100' },
+            React.createElement(DraggableSplit, {
+                className: 'gap-2 sm:gap-4',
+                initialPrimary: 0.6,
+                onPrimaryResize: handleSplitResize,
+                primary: React.createElement('div', { className: 'flex-1 h-full' },
+                    React.createElement(MapContainer, {
+                        projects: filtered,
+                        allProjects: projects,
+                        onMapReady: handleMapReady,
+                        onVisibleProjectsChange: setVisibleProjects,
+                        onPopupClose: handleDeselectProject,
+                        onMarkerClick: handleSelectProject
+                    })
+                ),
+                secondary: React.createElement('div', { className: 'flex-1 min-h-0 h-full' },
+                    React.createElement(Sidebar, {
+                        projects: visibleProjects.length ? visibleProjects : filtered,
+                        allProjects: projects, // Pass all projects for color index calculation
+                        selected: selected,
+                        onSelect: handleSelectProject,
+                        onSearch: search => handleFilterChange({ search }),
+                        onDeselect: handleDeselectProject
+                    })
+                )
+            })
         );
     };
 })();

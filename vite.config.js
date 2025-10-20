@@ -13,8 +13,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom'],
-          'map-vendor': ['leaflet', 'leaflet.markercluster'],
-          'slider-vendor': ['keen-slider']
+          'map-vendor': ['leaflet', 'leaflet.markercluster']
         }
       }
     }

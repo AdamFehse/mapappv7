@@ -16,50 +16,37 @@
 
         let galleryHtml = '';
         if (images.length > 1) {
-            // Keen Slider gallery with navigation dots
-            const uniqueId = `popup-slider-${Math.random().toString(36).substr(2, 9)}`;
+            const uniqueId = `popup-gallery-${Math.random().toString(36).substr(2, 9)}`;
             galleryHtml = `
-                <div id="${uniqueId}" class="keen-slider mb-1" style="width:100%;height:90px;">
-                    ${images.map(img => `<div class="keen-slider__slide flex items-center justify-center"><img src="${img.url}" alt="${img.alt}" class="h-20 max-w-full object-contain rounded"/></div>`).join('')}
+                <div id="${uniqueId}" class="relative mb-1 w-full" style="height:90px;overflow:hidden;border-radius:8px;background:rgba(255,255,255,0.1);">
+                    <div class="popup-gallery-track" style="display:flex;transition:transform 0.3s ease;width:${images.length * 100}%;">
+                        ${images.map(img => `<div class="popup-gallery-slide" style="flex:0 0 ${100 / images.length}%;display:flex;align-items:center;justify-content:center;"><img src="${img.url}" alt="${img.alt}" class="h-20 max-w-full object-contain"/></div>`).join('')}
+                    </div>
+                    <div class="popup-gallery-dots" style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);display:flex;gap:4px;">
+                        ${images.map((_, index) => `<button data-index="${index}" class="w-2 h-2 rounded-full border border-white/70 bg-white/40"></button>`).join('')}
+                    </div>
                 </div>
-                <div id="${uniqueId}-dots" class="dots flex justify-center gap-1 mb-1"></div>
                 <script>
-                setTimeout(function() {
-                  if (window.keenSlider) {
-                    var slider = new window.keenSlider('#${uniqueId}', {
-                      loop: true,
-                      slides: { perView: 1 }
-                    });
-
-                    // Create navigation dots
-                    var dotsContainer = document.getElementById('${uniqueId}-dots');
-                    var totalSlides = ${images.length};
-                    for (var i = 0; i < totalSlides; i++) {
-                      var dot = document.createElement('button');
-                      dot.className = 'w-2 h-2 rounded-full bg-white opacity-50 hover:opacity-75 transition-opacity';
-                      dot.onclick = (function(idx) {
-                        return function() { slider.moveToIdx(idx); };
-                      })(i);
-                      dotsContainer.appendChild(dot);
-                    }
-
-                    // Update active dot
-                    function updateDots(idx) {
-                      var dots = dotsContainer.children;
-                      for (var j = 0; j < dots.length; j++) {
-                        dots[j].className = j === idx
-                          ? 'w-2 h-2 rounded-full bg-white opacity-100 transition-opacity'
-                          : 'w-2 h-2 rounded-full bg-white opacity-50 hover:opacity-75 transition-opacity';
-                      }
-                    }
-
-                    slider.on('slideChanged', function(s) {
-                      updateDots(s.track.details.rel);
-                    });
-
-                    updateDots(0);
-                  }
-                }, 0);
+                    (function() {
+                        var root = document.getElementById('${uniqueId}');
+                        if (!root) return;
+                        var track = root.querySelector('.popup-gallery-track');
+                        var dots = root.querySelectorAll('.popup-gallery-dots button');
+                        if (!track || !dots.length) return;
+                        function setSlide(idx) {
+                            track.style.transform = 'translate3d(' + (-idx * 100) + '%, 0, 0)';
+                            dots.forEach(function(dot, i) {
+                                dot.style.opacity = i === idx ? '1' : '0.5';
+                            });
+                        }
+                        dots.forEach(function(dot) {
+                            dot.addEventListener('click', function() {
+                                var idx = Number(dot.getAttribute('data-index'));
+                                setSlide(idx);
+                            });
+                        });
+                        setSlide(0);
+                    })();
                 </script>
             `;
         } else if (images.length === 1) {
