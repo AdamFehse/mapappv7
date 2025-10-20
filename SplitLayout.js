@@ -1,9 +1,8 @@
 // SplitLayout.js - Draggable split panels for map and sidebar
-(function() {
-    const { useState, useRef, useMemo } = React;
-    const useEffect = React.useEffect;
-    window.StoryMapComponents = window.StoryMapComponents || {};
+const { useState, useRef, useMemo, useEffect } = React;
+window.StoryMapComponents = window.StoryMapComponents || {};
 
+(function() {
     const STYLE_ID = 'draggable-split-styles';
 
     function ensureStyles() {
