@@ -17,6 +17,8 @@
 !vite.config.js
 !REFACTORING_NOTES.md
 !README.md
+!NOTES.md
+!SplitLayout.js
 
 # Node and build artifacts
 node_modules/
