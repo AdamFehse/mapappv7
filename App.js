@@ -13,6 +13,11 @@
         const mapApiRef = React.useRef({ showProject: null, invalidateSize: null });
         const resizeFrameRef = React.useRef(null);
 
+        // Ensure these are always defined before component logic
+        const MapContainer = window.StoryMapComponents.MapContainer;
+        const Sidebar = window.StoryMapComponents.Sidebar;
+        const DraggableSplit = window.StoryMapComponents.DraggableSplit;
+
         // URL routing: Read hash on mount and listen for changes
         useEffect(() => {
             function handleHashChange() {
@@ -53,15 +58,11 @@
         }, []);
 
         if (loading) {
-            return React.createElement('div', 
+            return React.createElement('div',
                 { className: 'flex items-center justify-center h-screen text-xl' },
                 'Loading projects...'
             );
         }
-
-        const MapContainer = window.StoryMapComponents.MapContainer;
-        const Sidebar = window.StoryMapComponents.Sidebar;
-        const DraggableSplit = window.StoryMapComponents.DraggableSplit;
 
         // Handle project selection - call map function directly and update URL
         function handleSelectProject(project) {
