@@ -231,8 +231,3 @@
         );
     };
 })();
-        useEffect(() => {
-            if (typeof onPrimaryResize === 'function') {
-                onPrimaryResize(ratioRef.current);
-            }
-        }, [isRow, onPrimaryResize]);
