@@ -125,10 +125,12 @@ window.StoryMapComponents = window.StoryMapComponents || {};
         }, [breakpoint]);
 
         useEffect(() => {
+            // Only trigger resize callback when orientation changes
+            // Don't depend on onPrimaryResize to avoid infinite loops
             if (typeof onPrimaryResize === 'function') {
                 onPrimaryResize(ratioRef.current);
             }
-        }, [isRow, onPrimaryResize]);
+        }, [isRow]);
 
         const updateRatioFromEvent = (event) => {
             const container = containerRef.current;
