@@ -38,11 +38,30 @@
 <body>
   <div id="root"></div>
   <script>
-    window.addEventListener('DOMContentLoaded', () => {
+    function initializeApp() {
+      // Check if all required components are loaded
+      if (!window.StoryMapComponents?.App ||
+          !window.StoryMapComponents?.MapContainer ||
+          !window.StoryMapComponents?.Sidebar ||
+          !window.StoryMapComponents?.DraggableSplit ||
+          !window.ProjectFilter) {
+        // Not ready yet, try again
+        setTimeout(initializeApp, 50);
+        return;
+      }
+
+      // All components loaded, safe to render
       ReactDOM.createRoot(document.getElementById('root')).render(
         React.createElement(window.StoryMapComponents.App)
       );
-    });
+    }
+
+    // Start checking after DOM is ready
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', initializeApp);
+    } else {
+      initializeApp();
+    }
   </script>
 </body>
 </html>

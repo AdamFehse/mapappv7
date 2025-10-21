@@ -13,7 +13,7 @@
         const mapApiRef = React.useRef({ showProject: null, invalidateSize: null });
         const resizeFrameRef = React.useRef(null);
 
-        // Ensure these are always defined before component logic
+        // Component references (guaranteed to exist by index.html initialization check)
         const MapContainer = window.StoryMapComponents.MapContainer;
         const Sidebar = window.StoryMapComponents.Sidebar;
         const DraggableSplit = window.StoryMapComponents.DraggableSplit;
@@ -57,6 +57,16 @@
             return () => window.removeEventListener('projectDataLoaded', handleDataLoaded);
         }, []);
 
+        // Ensure pending resize callbacks are cleared on unmount
+        useEffect(() => {
+            return () => {
+                if (resizeFrameRef.current) {
+                    cancelAnimationFrame(resizeFrameRef.current);
+                    resizeFrameRef.current = null;
+                }
+            };
+        }, []);
+
         if (loading) {
             return React.createElement('div',
                 { className: 'flex items-center justify-center h-screen text-xl' },
@@ -90,16 +100,6 @@
                 mapApiRef.current.invalidateSize();
             }
         }
-
-        // Ensure pending resize callbacks are cleared on unmount
-        useEffect(() => {
-            return () => {
-                if (resizeFrameRef.current) {
-                    cancelAnimationFrame(resizeFrameRef.current);
-                    resizeFrameRef.current = null;
-                }
-            };
-        }, []);
 
         // Handle filter changes (e.g. from SearchBar)
         function handleFilterChange(newCriteria) {
