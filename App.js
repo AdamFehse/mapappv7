@@ -18,7 +18,7 @@
         const Sidebar = window.StoryMapComponents.Sidebar;
         const DraggableSplit = window.StoryMapComponents.DraggableSplit;
 
-        // URL routing: Read hash on mount and listen for changes
+        // URL routing: Handle hash changes and browser back button
         useEffect(() => {
             function handleHashChange() {
                 const hash = window.location.hash;
@@ -27,17 +27,20 @@
                     const project = projects.find(p => p.id === projectId);
                     if (project) {
                         setSelected(project);
+                        // Only show on map if map is ready
                         if (mapApiRef.current?.showProject) {
                             mapApiRef.current.showProject(project);
                         }
                     }
+                } else {
+                    setSelected(null);
                 }
             }
 
             // Handle on mount
             handleHashChange();
 
-            // Listen for hash changes
+            // Listen for hash changes (browser back/forward buttons)
             window.addEventListener('hashchange', handleHashChange);
             return () => window.removeEventListener('hashchange', handleHashChange);
         }, [projects]);
@@ -80,17 +83,17 @@
             if (mapApiRef.current?.showProject) {
                 mapApiRef.current.showProject(project);
             }
-            // Update URL hash for shareable links
+            // Update URL hash for shareable links (pushState enables browser back button)
             if (project) {
-                window.history.replaceState(null, '', `#project/${project.id}`);
+                window.history.pushState({ projectId: project.id }, '', `#project/${project.id}`);
             }
         }
 
         // Handle deselection - clear everything
         function handleDeselectProject() {
             setSelected(null);
-            // Clear URL hash
-            window.history.replaceState(null, '', window.location.pathname);
+            // Clear URL hash (pushState to work with back button)
+            window.history.pushState(null, '', window.location.pathname);
         }
 
         // Store the map's showProject function

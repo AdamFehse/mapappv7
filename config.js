@@ -16,8 +16,8 @@
     fetch(CONFIG.dataUrl)
         .then(res => res.json())
         .then(data => {
-            window.projectData = data.map((proj, index) => ({
-                id: proj.id || `project-${index}-${proj.ProjectName || 'unnamed'}`.replace(/\s+/g, '-'),
+            window.projectData = data.map((proj) => ({
+                id: proj.id,  // Use the id directly from the data file
                 name: proj.ProjectName || '',
                 description: proj.DescriptionShort || proj.DescriptionLong || '',
                 image: proj.ImageUrl || '',
