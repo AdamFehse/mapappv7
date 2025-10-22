@@ -214,9 +214,44 @@
         }, [onMapReady, projects.length]);
 
         return React.createElement('div', {
-            ref: mapRef,
-            className: 'w-full h-full rounded-lg shadow',
-            style: { minHeight: '200px' }
-        });
+            className: 'relative w-full h-full'
+        },
+            // Map container
+            React.createElement('div', {
+                ref: mapRef,
+                className: 'w-full h-full rounded-lg shadow',
+                style: { minHeight: '200px' }
+            }),
+
+            // Legend overlay
+            React.createElement('div', {
+                className: 'absolute bottom-4 right-4 bg-white rounded-lg shadow-lg p-3 z-400'
+            },
+                React.createElement('div', { className: 'text-xs font-bold text-gray-800 mb-2' }, 'Project Categories'),
+                React.createElement('div', { className: 'space-y-1.5' },
+                    React.createElement('div', { className: 'flex items-center gap-2' },
+                        React.createElement('div', {
+                            className: 'w-4 h-4 rounded-full',
+                            style: { background: '#FF6B6B' }
+                        }),
+                        React.createElement('span', { className: 'text-xs text-gray-700' }, 'Art-Based')
+                    ),
+                    React.createElement('div', { className: 'flex items-center gap-2' },
+                        React.createElement('div', {
+                            className: 'w-4 h-4 rounded-full',
+                            style: { background: '#4ECDC4' }
+                        }),
+                        React.createElement('span', { className: 'text-xs text-gray-700' }, 'Research')
+                    ),
+                    React.createElement('div', { className: 'flex items-center gap-2' },
+                        React.createElement('div', {
+                            className: 'w-4 h-4 rounded-full',
+                            style: { background: '#FFE66D' }
+                        }),
+                        React.createElement('span', { className: 'text-xs text-gray-700' }, 'Education')
+                    )
+                )
+            )
+        );
     };
 })();

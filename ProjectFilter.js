@@ -31,10 +31,42 @@ const ProjectFilter = {
             );
         }
 
-        // Category filter (ProjectCategory: Art-Based Projects, Research Projects, Education and Community Outreach)
-        if (criteria.category && criteria.category !== 'all') {
+        // Category filter (array: multiple categories can be selected - match any)
+        if (criteria.categories && Array.isArray(criteria.categories) && criteria.categories.length > 0) {
+            result = result.filter(p =>
+                p.raw && criteria.categories.includes(p.raw.ProjectCategory)
+            );
+        }
+        // Legacy single category filter (for backward compatibility)
+        else if (criteria.category && criteria.category !== 'all') {
             result = result.filter(p =>
                 p.raw && p.raw.ProjectCategory === criteria.category
+            );
+        }
+
+        // Theme filter (array: multiple themes can be selected - match any)
+        if (criteria.themes && Array.isArray(criteria.themes) && criteria.themes.length > 0) {
+            result = result.filter(p =>
+                p.raw && criteria.themes.includes(p.raw.Theme)
+            );
+        }
+        // Legacy single theme filter (for backward compatibility)
+        else if (criteria.theme && criteria.theme !== 'all') {
+            result = result.filter(p =>
+                p.raw && p.raw.Theme === criteria.theme
+            );
+        }
+
+        // Product type filter (array: multiple products can be selected - match any)
+        if (criteria.products && Array.isArray(criteria.products) && criteria.products.length > 0) {
+            result = result.filter(p =>
+                p.raw && criteria.products.includes(p.raw.Product)
+            );
+        }
+        // Legacy single product filter (for backward compatibility)
+        else if (criteria.product && criteria.product !== 'all') {
+            result = result.filter(p =>
+                p.raw && p.raw.Product === criteria.product
             );
         }
 
@@ -49,20 +81,6 @@ const ProjectFilter = {
         if (criteria.tag && criteria.tag !== 'all') {
             result = result.filter(p =>
                 Array.isArray(p.raw?.Tags) && p.raw.Tags.includes(criteria.tag)
-            );
-        }
-
-        // Theme filter
-        if (criteria.theme && criteria.theme !== 'all') {
-            result = result.filter(p =>
-                p.raw && p.raw.Theme === criteria.theme
-            );
-        }
-
-        // Product type filter (Photography, Music, Theater & Other Live Performances, etc.)
-        if (criteria.product && criteria.product !== 'all') {
-            result = result.filter(p =>
-                p.raw && p.raw.Product === criteria.product
             );
         }
 

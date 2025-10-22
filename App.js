@@ -106,6 +106,16 @@
             setFilterCriteria(prev => ({ ...prev, ...newCriteria }));
         }
 
+        // Handle category/theme/product filter changes from SearchBar
+        function handleFiltersChange(filters) {
+            setFilterCriteria(prev => ({
+                ...prev,
+                categories: filters.categories || [],
+                themes: filters.themes || [],
+                products: filters.products || []
+            }));
+        }
+
         function handleSplitResize() {
             if (!mapApiRef.current?.invalidateSize) return;
             if (resizeFrameRef.current) return;
@@ -138,6 +148,7 @@
                         selected: selected,
                         onSelect: handleSelectProject,
                         onSearch: search => handleFilterChange({ search }),
+                        onFiltersChange: handleFiltersChange,
                         onDeselect: handleDeselectProject
                     })
                 )

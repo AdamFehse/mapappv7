@@ -4,7 +4,7 @@
     window.StoryMapComponents = window.StoryMapComponents || {};
 
     // Main Sidebar Component - orchestrates all sub-components
-    window.StoryMapComponents.Sidebar = function Sidebar({ projects, allProjects, selected, onSelect, onSearch, onDeselect }) {
+    window.StoryMapComponents.Sidebar = function Sidebar({ projects, allProjects, selected, onSelect, onSearch, onFiltersChange, onDeselect }) {
         const resultCount = projects.length;
         const totalCount = allProjects.length;
 
@@ -24,11 +24,13 @@
             ),
             // Search bar with result count (fixed, separate)
             React.createElement('div',
-                { className: 'flex-shrink-0 mt-2' },
+                { className: 'flex-shrink-0 mt-2 bg-white rounded-lg shadow p-3' },
                 React.createElement(window.StoryMapComponents.SearchBar, {
                     onSearch: onSearch,
+                    onFiltersChange: onFiltersChange,
                     resultCount: resultCount,
-                    totalCount: totalCount
+                    totalCount: totalCount,
+                    allProjects: allProjects
                 })
             ),
             // Carousel panel (fixed, separate)

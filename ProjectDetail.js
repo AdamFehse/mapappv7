@@ -61,26 +61,27 @@
                     d: 'M6 18L18 6M6 6l12 12'
                 })
             )),
-            // Rich preview header (like carousel main slide)
+            // Compact header with image and key info
             React.createElement('div', {
                 className: 'text-white shadow-lg',
                 style: gradientStyle
             },
-                React.createElement('div', { className: 'flex h-48 gap-3 p-4' },
-                    // Image section
-                    project.image && React.createElement('div', { className: 'flex-shrink-0 w-40' },
+                React.createElement('div', { className: 'flex h-32 gap-3 p-3' },
+                    // Image section (smaller)
+                    project.image && React.createElement('div', { className: 'flex-shrink-0 w-32' },
                         React.createElement('img', {
                             src: project.image,
                             alt: project.name,
                             className: 'w-full h-full object-cover rounded-lg shadow-md'
                         })
                     ),
-                    // Info section
-                    React.createElement('div', { className: 'flex-1 flex flex-col justify-center overflow-hidden' },
-                        React.createElement('h2', { className: 'text-2xl font-bold mb-2 line-clamp-2' }, raw.ProjectName || project.name),
-                        React.createElement('p', { className: 'text-sm opacity-90 line-clamp-3 mb-3' }, raw.DescriptionShort || project.description),
-                        React.createElement('div', { className: 'text-xs space-y-1 opacity-80' },
-                            raw.Name && React.createElement('div', { className: 'truncate' }, '👤 ', raw.Name),
+                    // Info section (more compact)
+                    React.createElement('div', { className: 'flex-1 flex flex-col justify-between overflow-hidden py-1' },
+                        React.createElement('div', {},
+                            React.createElement('h2', { className: 'text-lg font-bold mb-1 line-clamp-2' }, raw.ProjectName || project.name),
+                            React.createElement('p', { className: 'text-xs opacity-90 line-clamp-2' }, raw.DescriptionShort || project.description)
+                        ),
+                        React.createElement('div', { className: 'text-xs space-y-0.5 opacity-80' },
                             raw.Year && React.createElement('div', {}, '📅 ', raw.Year),
                             raw.Location && React.createElement('div', { className: 'truncate' }, '📍 ', raw.Location)
                         )

@@ -2,66 +2,21 @@
 (function() {
     window.StoryMapComponents = window.StoryMapComponents || {};
 
-    // Create popup HTML for a project, with Swiper gallery if multiple images
+    // Create popup HTML - minimal preview style
     function createPopup(proj, colorGradient) {
-        // Gather all images: ImageUrl, proj.image, artworks
-        const images = [];
-        if (proj.raw?.ImageUrl) images.push({ url: proj.raw.ImageUrl, alt: proj.raw.ProjectName || proj.name });
-        if (proj.image && proj.image !== proj.raw?.ImageUrl) images.push({ url: proj.image, alt: proj.name });
-        if (Array.isArray(proj.raw?.Artworks)) {
-            proj.raw.Artworks.forEach(art => {
-                if (art.ImageUrl) images.push({ url: art.ImageUrl, alt: art.Title || 'Artwork' });
-            });
-        }
-
-        let galleryHtml = '';
-        if (images.length > 1) {
-            const uniqueId = `popup-gallery-${Math.random().toString(36).substr(2, 9)}`;
-            galleryHtml = `
-                <div id="${uniqueId}" class="relative mb-1 w-full" style="height:90px;overflow:hidden;border-radius:8px;background:rgba(255,255,255,0.1);">
-                    <div class="popup-gallery-track" style="display:flex;transition:transform 0.3s ease;width:${images.length * 100}%;">
-                        ${images.map(img => `<div class="popup-gallery-slide" style="flex:0 0 ${100 / images.length}%;display:flex;align-items:center;justify-content:center;"><img src="${img.url}" alt="${img.alt}" class="h-20 max-w-full object-contain"/></div>`).join('')}
-                    </div>
-                    <div class="popup-gallery-dots" style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);display:flex;gap:4px;">
-                        ${images.map((_, index) => `<button data-index="${index}" class="w-2 h-2 rounded-full border border-white/70 bg-white/40"></button>`).join('')}
-                    </div>
-                </div>
-                <script>
-                    (function() {
-                        var root = document.getElementById('${uniqueId}');
-                        if (!root) return;
-                        var track = root.querySelector('.popup-gallery-track');
-                        var dots = root.querySelectorAll('.popup-gallery-dots button');
-                        if (!track || !dots.length) return;
-                        function setSlide(idx) {
-                            track.style.transform = 'translate3d(' + (-idx * 100) + '%, 0, 0)';
-                            dots.forEach(function(dot, i) {
-                                dot.style.opacity = i === idx ? '1' : '0.5';
-                            });
-                        }
-                        dots.forEach(function(dot) {
-                            dot.addEventListener('click', function() {
-                                var idx = Number(dot.getAttribute('data-index'));
-                                setSlide(idx);
-                            });
-                        });
-                        setSlide(0);
-                    })();
-                </script>
-            `;
-        } else if (images.length === 1) {
-            galleryHtml = `<img src="${images[0].url}" alt="${images[0].alt}" class="w-full h-20 object-contain rounded mb-1"/>`;
-        }
+        const image = proj.raw?.ImageUrl || proj.image;
 
         return `
-            <div class="p-2 rounded-lg" style="min-width:200px;max-width:260px;background:${colorGradient};">
-                ${galleryHtml}
-                <div class="font-bold text-base mb-1 text-white">${proj.name || ''}</div>
-                ${proj.raw?.ProjectCategory ? `<div class="text-xs text-white opacity-85 mb-1 font-semibold">📁 ${proj.raw.ProjectCategory}</div>` : ''}
-                ${proj.raw?.Theme ? `<div class="text-xs text-white opacity-85 mb-1">🎯 ${proj.raw.Theme}</div>` : ''}
-                ${proj.raw?.Product ? `<div class="text-xs text-white opacity-85 mb-1">📦 ${proj.raw.Product}</div>` : ''}
-                <div class="text-sm text-white opacity-90 mb-1">${proj.description || ''}</div>
-                ${proj.raw?.Location ? `<div class="text-xs text-white opacity-75">📍 ${proj.raw.Location}</div>` : ''}
+            <div class="rounded-lg overflow-hidden" style="min-width:220px;max-width:280px;background:${colorGradient};">
+                ${image ? `<img src="${image}" alt="${proj.name}" class="w-full h-24 object-cover"/>` : ''}
+                <div class="p-2.5 text-white">
+                    <div class="font-bold text-sm mb-1.5 line-clamp-2">${proj.name || ''}</div>
+                    <div class="space-y-1 text-xs opacity-90">
+                        ${proj.raw?.ProjectCategory ? `<div class="inline-block px-2 py-0.5 bg-white/20 rounded-full font-semibold">${proj.raw.ProjectCategory}</div>` : ''}
+                        ${proj.raw?.Theme ? `<div class="text-xs opacity-80">${proj.raw.Theme}</div>` : ''}
+                        ${proj.raw?.Location ? `<div class="text-xs opacity-75">📍 ${proj.raw.Location}</div>` : ''}
+                    </div>
+                </div>
             </div>
         `;
     }
