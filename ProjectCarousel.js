@@ -83,24 +83,87 @@ function setupScaleTween(embla) {
     };
 }
 
-function setupProgressBar(embla, progressNode) {
+function setupProgressBar(embla, progressNode, projects) {
     if (!progressNode) return () => {};
+
+    const colorUtils = window.ColorUtils;
+
+    // Helper to get RGB values from hex color
+    function hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : { r: 59, g: 130, b: 246 }; // fallback to blue
+    }
+
+    // Helper to interpolate between two RGB colors
+    function interpolateRgb(rgb1, rgb2, t) {
+        return {
+            r: Math.round(rgb1.r + (rgb2.r - rgb1.r) * t),
+            g: Math.round(rgb1.g + (rgb2.g - rgb1.g) * t),
+            b: Math.round(rgb1.b + (rgb2.b - rgb1.b) * t)
+        };
+    }
+
+    // Helper to convert RGB back to hex
+    function rgbToHex(rgb) {
+        return '#' + [rgb.r, rgb.g, rgb.b].map(x => {
+            const hex = x.toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+        }).join('');
+    }
+
+    // Extract color from category or use index-based gradient
+    function getProjectColor(project) {
+        if (!project) return '#3b82f6'; // fallback if project is undefined
+        const category = project.raw?.ProjectCategory;
+        const categoryColors = colorUtils.getCategoryColor(category);
+        
+        // Extract the end color from the gradient (it's in the format "linear-gradient(135deg, #color1 0%, #color2 100%)")
+        const match = categoryColors.gradient.match(/#[0-9a-fA-F]{6}/g);
+        return match ? match[1] : '#1e40af'; // Use the end color, fallback to blue
+    }
 
     function applyProgress() {
         const progress = clamp(embla.scrollProgress(), 0, 1);
-        progressNode.style.transform = `translate3d(${progress * 100}%, 0px, 0px)`;
+        const barProgress = progress * 100;
+        
+        const projectCount = projects.length;
+        if (projectCount === 0) return;
+        
+        // Calculate the current index based on scroll progress
+        // This gives us the actual centered project during smooth scrolling
+        const scrollProgress = embla.scrollProgress();
+        const currentIndex = Math.round(scrollProgress * (projectCount - 1));
+        const clampedIndex = Math.min(Math.max(currentIndex, 0), projectCount - 1);
+        
+        // Get color for the currently centered project
+        const selectedColor = getProjectColor(projects[clampedIndex]);
+
+        // Convert to RGB
+        const selectedRgb = hexToRgb(selectedColor);
+        const barColor = rgbToHex(selectedRgb);
+
+        // Apply both color and position with smooth transition
+        progressNode.style.background = barColor;
+        progressNode.style.transform = `translate3d(${barProgress}%, 0px, 0px)`;
     }
 
     function removeProgress() {
-        progressNode.removeAttribute('style');
+        progressNode.style.background = '';
+        progressNode.style.transform = '';
     }
 
     applyProgress();
     embla.on('scroll', applyProgress);
+    embla.on('select', applyProgress);
     embla.on('reInit', applyProgress);
 
     return () => {
         embla.off('scroll', applyProgress);
+        embla.off('select', applyProgress);
         embla.off('reInit', applyProgress);
         removeProgress();
     };
@@ -149,7 +212,7 @@ function setupProgressBar(embla, progressNode) {
             if (cleanupProgressRef.current) {
                 cleanupProgressRef.current();
             }
-            cleanupProgressRef.current = setupProgressBar(embla, progressBarRef.current);
+            cleanupProgressRef.current = setupProgressBar(embla, progressBarRef.current, projects);
 
             embla.on('select', () => updateControls(embla));
             embla.on('reInit', () => {

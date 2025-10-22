@@ -1,9 +1,9 @@
 .embla {
     width: 100%;
-    max-width: 640px;
+    max-width: 100%;
     margin: 0 auto;
-    --slide-spacing: 0.5rem;
-    --slide-size: 35%;
+    --slide-spacing: 0.4rem;
+    --slide-size: 28%;
 }
 
 .embla__viewport {
@@ -26,13 +26,13 @@
 
 @media (max-width: 900px) {
     .embla {
-        --slide-size: 44%;
+        --slide-size: 38%;
     }
 }
 
 @media (max-width: 640px) {
     .embla {
-        --slide-size: 58%;
+        --slide-size: 50%;
     }
 }
 
@@ -40,7 +40,7 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    transform: scale(0.85);
+    transform: scale(0.92);
     transition: transform 0.35s ease;
 }
 
@@ -48,23 +48,25 @@
     width: 100%;
     border-radius: 0.85rem;
     border: 2px solid transparent;
-    padding: 0.5rem 0.5rem;
+    padding: 0.35rem 0.35rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    gap: 0.2rem;
+    gap: 0.15rem;
     color: var(--surface-text-inverse);
     background: linear-gradient(135deg, #3b82f6, #1e3a8a);
-    box-shadow: var(--panel-shadow);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     cursor: pointer;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-    min-height: 110px;
-    max-height: 110px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+    min-height: 95px;
+    max-height: 95px;
 }
 
 .carousel-card:hover {
-    opacity: 0.93;
+    opacity: 0.95;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .carousel-card:focus {
@@ -74,23 +76,24 @@
 
 .carousel-card__image {
     width: 100%;
-    height: 60px;
+    height: 55px;
     object-fit: cover;
-    border-radius: 0.65rem;
-    box-shadow: var(--panel-shadow);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .carousel-card__label {
-    font-size: 0.7rem;
-    font-weight: 600;
+    font-size: 0.65rem;
+    font-weight: 700;
     text-align: center;
-    line-height: 1.25;
-    padding: 0 0.2rem;
-    max-height: 32px;
+    line-height: 1.15;
+    padding: 0.05rem 0.1rem;
+    max-height: 24px;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .embla__scale__container.carousel-slide--active .carousel-card {
@@ -102,58 +105,62 @@
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: center;
-    gap: 0.9rem;
-    margin-top: 1rem;
+    gap: 0.8rem;
+    margin-top: 0.75rem;
+    padding: 0 0.2rem;
 }
 
 .embla__buttons {
     display: grid;
-    grid-template-columns: repeat(2, 2.6rem);
+    grid-template-columns: repeat(2, 2.4rem);
     gap: 0.5rem;
 }
 
 .embla__button {
     -webkit-appearance: none;
     appearance: none;
-    background: transparent;
-    border: 0;
-    width: 2.6rem;
-    height: 2.6rem;
+    background: color-mix(in srgb, var(--pico-primary) 85%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--pico-primary) 95%, transparent);
+    width: 2.4rem;
+    height: 2.4rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: var(--surface-text-muted);
-    box-shadow: inset 0 0 0 2px var(--surface-border);
-    transition: color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    color: var(--surface-text-inverse);
+    box-shadow: 0 2px 6px color-mix(in srgb, var(--pico-primary) 35%, transparent);
+    transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .embla__button:hover:not([disabled]) {
-    background: var(--surface-overlay);
-    background: color-mix(in srgb, var(--pico-primary) 15%, transparent);
-    color: var(--surface-text);
+    background: color-mix(in srgb, var(--pico-primary) 95%, transparent);
+    color: var(--surface-text-inverse);
+    box-shadow: 0 4px 10px color-mix(in srgb, var(--pico-primary) 45%, transparent);
+    transform: translateY(-2px);
 }
 
 .embla__button:focus {
     outline: none;
-    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--pico-primary) 55%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--pico-primary) 35%, transparent), 0 2px 6px color-mix(in srgb, var(--pico-primary) 35%, transparent);
 }
 
 .embla__button[disabled] {
-    opacity: 0.35;
-    cursor: default;
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: color-mix(in srgb, var(--surface-text-muted) 30%, transparent);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .embla__button__svg {
-    width: 40%;
-    height: 40%;
+    width: 45%;
+    height: 45%;
 }
 
 .embla__progress {
     position: relative;
     width: 100%;
-    height: 0.4rem;
+    height: 0.3rem;
     border-radius: 9999px;
     background: var(--surface-overlay);
     overflow: hidden;

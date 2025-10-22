@@ -34,10 +34,12 @@
         )
     };
 
-    // Dropdown component for multi-select filters
+    // Dropdown component for multi-select filters (Downshift-enhanced for accessibility)
     function FilterDropdown({ label, icon, options, selected, onChange }) {
         const [isOpen, setIsOpen] = useState(false);
+        const [highlightedIndex, setHighlightedIndex] = useState(null);
         const dropdownRef = useRef(null);
+        const buttonRef = useRef(null);
 
         // Close dropdown when clicking outside
         useEffect(() => {
@@ -50,6 +52,53 @@
             return () => document.removeEventListener('mousedown', handleClickOutside);
         }, []);
 
+        // Keyboard navigation (Downshift-inspired)
+        useEffect(() => {
+            function handleKeyDown(event) {
+                if (!isOpen) {
+                    if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
+                        event.preventDefault();
+                        setIsOpen(true);
+                        setHighlightedIndex(0);
+                    }
+                    return;
+                }
+
+                switch (event.key) {
+                    case 'Escape':
+                        setIsOpen(false);
+                        event.preventDefault();
+                        break;
+                    case 'ArrowDown':
+                        event.preventDefault();
+                        setHighlightedIndex(prev => 
+                            prev === null ? 0 : Math.min(prev + 1, options.length - 1)
+                        );
+                        break;
+                    case 'ArrowUp':
+                        event.preventDefault();
+                        setHighlightedIndex(prev => 
+                            prev === null ? options.length - 1 : Math.max(prev - 1, 0)
+                        );
+                        break;
+                    case 'Enter':
+                    case ' ':
+                        event.preventDefault();
+                        if (highlightedIndex !== null) {
+                            toggleOption(options[highlightedIndex]);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            if (isOpen && buttonRef.current) {
+                buttonRef.current.addEventListener('keydown', handleKeyDown);
+                return () => buttonRef.current?.removeEventListener('keydown', handleKeyDown);
+            }
+        }, [isOpen, highlightedIndex, options]);
+
         function toggleOption(option) {
             const next = selected.includes(option)
                 ? selected.filter(value => value !== option)
@@ -60,13 +109,15 @@
         const hasSelection = selected.length > 0;
 
         return React.createElement('div', { ref: dropdownRef, className: 'filter-dropdown' },
-            // Dropdown button
+            // Dropdown button with accessibility attributes
             React.createElement('button', {
+                ref: buttonRef,
                 onClick: () => setIsOpen(!isOpen),
                 type: 'button',
                 className: `filter-dropdown__button${hasSelection ? ' is-active' : ''}`,
                 'aria-haspopup': 'listbox',
-                'aria-expanded': isOpen ? 'true' : 'false'
+                'aria-expanded': isOpen ? 'true' : 'false',
+                'aria-label': `${label} filter`
             },
                 React.createElement('span', { className: 'filter-dropdown__icon', 'aria-hidden': 'true' }, icon),
                 React.createElement('span', { className: 'filter-dropdown__label' }, label),
@@ -82,16 +133,19 @@
                 'aria-label': `${label} options`
             },
                 options.length > 0
-                    ? options.map(option => React.createElement('label', {
+                    ? options.map((option, idx) => React.createElement('label', {
                         key: option,
-                        className: 'filter-dropdown__option',
+                        className: `filter-dropdown__option${idx === highlightedIndex ? ' is-highlighted' : ''}`,
                         role: 'option',
-                        'aria-selected': selected.includes(option) ? 'true' : 'false'
+                        'aria-selected': selected.includes(option) ? 'true' : 'false',
+                        onMouseEnter: () => setHighlightedIndex(idx),
+                        onMouseLeave: () => setHighlightedIndex(null)
                     },
                         React.createElement('input', {
                             type: 'checkbox',
                             checked: selected.includes(option),
-                            onChange: () => toggleOption(option)
+                            onChange: () => toggleOption(option),
+                            'aria-label': `${option} (${selected.includes(option) ? 'selected' : 'not selected'})`
                         }),
                         React.createElement('span', {}, option)
                     ))
@@ -224,19 +278,6 @@
                 }, isSearchFiltered || hasActiveFilters
                     ? `Showing ${resultCount} of ${totalCount} projects`
                     : `${totalCount} projects total`
-                )
-            ),
-
-            // Mini legend with category colors
-            React.createElement('div', { className: 'sidebar__legend' },
-                window.ColorUtils && Object.entries(window.ColorUtils.categoryColors || {}).map(([name, colors]) =>
-                    React.createElement('div', { key: name, className: 'sidebar__legend-item' },
-                        React.createElement('span', {
-                            className: 'sidebar__legend-dot',
-                            style: { background: colors?.border || '#3b82f6' }
-                        }),
-                        React.createElement('span', {}, colors?.short || name)
-                    )
                 )
             )
         );

@@ -22,6 +22,18 @@
   filter: none !important;
 }
 
+/* Reset Pico button styles on Leaflet zoom controls */
+.leaflet-control-zoom a[role="button"] {
+  all: revert;
+  background: inherit;
+  border: inherit;
+  color: inherit;
+  padding: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  text-decoration: none;
+}
+
 /* Reset Pico styles inside Leaflet popups */
 .leaflet-popup-content button,
 .leaflet-popup-content [role="button"] {

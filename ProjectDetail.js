@@ -57,8 +57,8 @@
             onDeselect && React.createElement('button', {
                 onClick: onDeselect,
                 className: 'detail-panel__close',
-                title: 'Clear selection',
-                'aria-label': 'Clear selection'
+                title: 'Close project details',
+                'aria-label': 'Close project details'
             }, React.createElement('svg', {
                 className: 'detail-panel__close-icon',
                 fill: 'none',
