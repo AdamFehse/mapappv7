@@ -3,7 +3,7 @@
     const CONFIG = {
         center: [31.313354, -110.945987],
         zoom: 7,
-        dataUrl: 'https://raw.githubusercontent.com/AdamFehse/mapappv7/refs/heads/main/storymapdata_v3.json',
+        dataUrl: 'https://raw.githubusercontent.com/AdamFehse/mapappv7/main/storymapdata_v3.json',
         tileUrl: 'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     };
