@@ -1,5 +1,5 @@
-// Sidebar.js - Main sidebar layout (uses modular components)
-// Components: ProjectDetail.js, ProjectCarousel.js, SearchBar.js
+// Sidebar.js - Main sidebar layout with inline project detail panel
+// Components: ProjectCard.js, ProjectCarousel.js, SearchBar.js
 (function() {
     window.StoryMapComponents = window.StoryMapComponents || {};
 
@@ -8,23 +8,23 @@
         const resultCount = projects.length;
         const totalCount = allProjects.length;
 
+        const handleSelectProject = (project) => {
+            onSelect(project);
+        };
+
         return React.createElement('div',
-            { className: 'flex flex-col h-full' },
-            // Details panel (scrollable)
-            React.createElement('div',
-                { className: 'flex-grow min-h-0 overflow-auto' },
-                React.createElement('div',
-                    { className: 'bg-white rounded-lg shadow w-full h-full' },
-                    React.createElement(window.StoryMapComponents.ProjectDetail, {
-                        project: selected,
-                        allProjects: allProjects,
-                        onDeselect: onDeselect
-                    })
-                )
+            { className: 'sidebar' },
+            // Detail panel (fills remaining height, scrollable)
+            React.createElement('article',
+                { className: 'sidebar__panel sidebar__detail' },
+                React.createElement(window.StoryMapComponents.ProjectDetail, {
+                    project: selected,
+                    onDeselect: onDeselect
+                })
             ),
-            // Search bar with result count (fixed, separate)
-            React.createElement('div',
-                { className: 'flex-shrink-0 mt-2 bg-white rounded-lg shadow p-3' },
+            // Search bar with result count
+            React.createElement('section',
+                { className: 'sidebar__panel sidebar__panel--padded' },
                 React.createElement(window.StoryMapComponents.SearchBar, {
                     onSearch: onSearch,
                     onFiltersChange: onFiltersChange,
@@ -33,17 +33,27 @@
                     allProjects: allProjects
                 })
             ),
-            // Carousel panel (fixed, separate)
-            React.createElement('div',
-                { className: 'flex-shrink-0 mt-2' },
-                React.createElement('div',
-                    { className: 'bg-white rounded-lg shadow p-2' },
+            // Carousel panel (fixed, below search)
+            React.createElement('section',
+                { className: 'sidebar__panel sidebar__carousel' },
                     React.createElement(window.StoryMapComponents.ProjectCarousel, {
                         projects: projects,
-                        allProjects: allProjects,
-                        onSelect: onSelect,
+                        onSelect: handleSelectProject,
                         selectedId: selected?.id
                     })
+            ),
+            // Project cards list (scrollable)
+            React.createElement('section',
+                { className: 'sidebar__panel sidebar__list' },
+                projects.length > 0 ? projects.map(proj =>
+                    React.createElement(window.StoryMapComponents.ProjectCard, {
+                        key: proj.id,
+                        project: proj,
+                        onClick: handleSelectProject,
+                        isSelected: selected?.id === proj.id
+                    })
+                ) : React.createElement('div', { className: 'empty-state' },
+                    'No projects match your search'
                 )
             )
         );

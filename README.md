@@ -1,31 +1,33 @@
 # Story Map App V7
 
-An interactive story map application built with React, Leaflet, and Keen Slider. This app displays projects on a map with rich details, artwork galleries, and interactive popups.
-
+An interactive story map application built with React, Leaflet, and Embla Carousel. This app displays projects on a map with rich details, filter/search capabilities, and interactive popups.
 
 ## Features
 
 - **Interactive Map**: Leaflet-based map with marker clustering
-- **Project Details**: Scrollable interface showing Details, Artworks, Poems, Activities, and Outcomes
-- **Image Galleries**: Keen Slider galleries for artworks and project images in popups
+- **Project Details**: Sidebar showing project information with responsive layout
+- **Project Carousel**: Embla-based thumbnail carousel with smooth scrolling
 - **Responsive Design**: Mobile-first design with Tailwind CSS
-- **Advanced Search**: Filter projects by name, description, PI, location, category, affiliation, or department
-- **Project Carousel**: Swipe through visible projects with color-coded thumbnails
-- **URL Routing**: Share direct links to specific projects
-- **Result Counter**: See how many projects match your search
-- **Consistent Colors**: Projects use the same gradient colors across carousel, map popups, and detail views
+- **Advanced Search**: Filter projects by name, category, theme, product, and more
+- **URL Routing**: Share direct links to specific projects with browser back/forward support
+- **Result Counter**: See how many projects match your filters
+- **Centralized Color System**: Consistent gradient colors across carousel, map, and detail views
 
-## GitHub Pages Deployment
+## Getting Started
 
-This app is deployed to GitHub Pages at: [DEMO](https://adamfehse.github.io/mapappv7/) 
+This app runs entirely in the browser with no build step required. Just open `index.html` in a web server.
 
 ## Technologies
 
-- **React 18** (Production builds via CDN)
-- **Leaflet** with MarkerCluster
-- **Keen Slider** (single slider library for all carousels and galleries)
-- **Tailwind CSS**
-- **ColorUtils** - Centralized color palette system
+- **React 18** (via CDN)
+- **Leaflet** with MarkerCluster (via CDN)
+- **Embla Carousel** (via CDN)
+- **Tailwind CSS** (via CDN)
+- **ColorUtils** - Centralized color palette and gradient system
+
+## Data
+
+The app first tries to load `storymapdata_v3.json` from the local bundle and automatically falls back to the published GitHub Pages JSON if the local file is unavailable.
 
 ## Project Structure
 
@@ -36,7 +38,7 @@ This app is deployed to GitHub Pages at: [DEMO](https://adamfehse.github.io/mapa
 ├── MapUtils.js             # Marker and popup creation utilities
 ├── Sidebar.js              # Project details sidebar layout
 ├── SearchBar.js            # Search input with result count
-├── ProjectCarousel.js      # Keen Slider thumbnail carousel
+├── ProjectCarousel.js      # Embla-based thumbnail carousel
 ├── ProjectDetail.js        # Project detail view component
 ├── ProjectFilter.js        # Centralized filtering logic
 ├── ColorUtils.js           # Centralized color gradient system

@@ -1,6 +1,13 @@
 // ColorUtils.js - Centralized color gradients for project styling
 (function() {
     window.ColorUtils = {
+        // Category-based color palette - single source of truth for category colors
+        categoryColors: {
+            'Art-Based Projects': { gradient: 'linear-gradient(135deg, #FF6B6B 0%, #FF5252 100%)', border: '#FF4444', light: '#FFE5E5', short: 'Art-Based' },
+            'Research Projects': { gradient: 'linear-gradient(135deg, #4ECDC4 0%, #2DB8AA 100%)', border: '#1DA39F', light: '#E0F7F6', short: 'Research' },
+            'Education and Community Outreach': { gradient: 'linear-gradient(135deg, #FFE66D 0%, #FDD835 100%)', border: '#FBC02D', light: '#FFFEF0', short: 'Education' }
+        },
+
         // Consolidated color palette - single source of truth
         // Each gradient has start/end colors that work everywhere
         gradients: [
@@ -40,16 +47,9 @@
             return this.gradients[index % this.gradients.length].end;
         },
 
-        // Get gradient by project ID (finds index in projects array)
-        getGradientCSSById: function(projectId, projects) {
-            const idx = projects.findIndex(p => p.id === projectId);
-            return this.getGradientCSS(idx >= 0 ? idx : 0);
-        },
-
-        // Get gradient style by project ID
-        getGradientStyleById: function(projectId, projects) {
-            const idx = projects.findIndex(p => p.id === projectId);
-            return this.getGradientStyle(idx >= 0 ? idx : 0);
+        // Get category color by name
+        getCategoryColor: function(category) {
+            return this.categoryColors[category] || { gradient: 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)', border: '#3b82f6', light: '#E0E7FF', short: 'Other' };
         }
     };
 })();

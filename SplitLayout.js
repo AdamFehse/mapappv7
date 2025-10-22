@@ -3,74 +3,6 @@ const { useState, useRef, useMemo, useEffect } = React;
 window.StoryMapComponents = window.StoryMapComponents || {};
 
 (function() {
-    const STYLE_ID = 'draggable-split-styles';
-
-    function ensureStyles() {
-        if (document.getElementById(STYLE_ID)) return;
-        const style = document.createElement('style');
-        style.id = STYLE_ID;
-        style.textContent = `
-            .split-layout {
-                position: relative;
-                display: flex;
-                width: 100%;
-                height: 100%;
-            }
-            .split-layout--column {
-                flex-direction: column;
-            }
-            .split-layout--row {
-                flex-direction: row;
-            }
-            .split-pane {
-                position: relative;
-                display: flex;
-                flex-direction: column;
-                min-width: 0;
-                min-height: 0;
-            }
-            .split-handle {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex: 0 0 auto;
-                background: rgba(17, 24, 39, 0.12);
-                transition: background 0.2s ease;
-            }
-            .split-handle::after {
-                content: '';
-                display: inline-block;
-                background: rgba(17, 24, 39, 0.5);
-                border-radius: 9999px;
-            }
-            .split-handle:hover {
-                background: rgba(17, 24, 39, 0.18);
-            }
-            .split-handle:active {
-                background: rgba(17, 24, 39, 0.25);
-            }
-            .split-layout--column .split-handle {
-                cursor: row-resize;
-                height: 10px;
-                width: 100%;
-            }
-            .split-layout--column .split-handle::after {
-                width: 48px;
-                height: 4px;
-            }
-            .split-layout--row .split-handle {
-                cursor: col-resize;
-                width: 10px;
-                height: 100%;
-            }
-            .split-layout--row .split-handle::after {
-                width: 4px;
-                height: 48px;
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
     function clamp(value, min, max) {
         return Math.min(max, Math.max(min, value));
     }
@@ -86,8 +18,6 @@ window.StoryMapComponents = window.StoryMapComponents || {};
         className = '',
         handleAriaLabel = 'Resize panels'
     }) {
-        ensureStyles();
-
         const containerRef = useRef(null);
         const orientationRef = useRef(false);
 

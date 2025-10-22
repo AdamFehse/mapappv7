@@ -20,6 +20,8 @@
 !NOTES.md
 !SplitLayout.js
 !storymapdata_v3.json
+!cssplan.md
+!styles/
 
 # Node and build artifacts
 node_modules/

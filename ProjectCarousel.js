@@ -110,169 +110,7 @@ function setupProgressBar(embla, progressNode) {
     const { useEffect, useRef } = React;
     window.StoryMapComponents = window.StoryMapComponents || {};
 
-    const STYLE_ID = 'project-carousel-embla-scale';
-
-    function ensureStyles() {
-        if (document.getElementById(STYLE_ID)) return;
-        const style = document.createElement('style');
-        style.id = STYLE_ID;
-        style.textContent = `
-            .embla {
-                width: 100%;
-                max-width: 640px;
-                margin: 0 auto;
-                --slide-spacing: 0.6rem;
-                --slide-size: 38%;
-            }
-            .embla__viewport {
-                overflow: hidden;
-            }
-            .embla__container {
-                display: flex;
-                touch-action: pan-y pinch-zoom;
-                margin-left: calc(var(--slide-spacing) * -1);
-                user-select: none;
-            }
-            .embla__slide {
-                transform: translate3d(0, 0, 0);
-                flex: 0 0 var(--slide-size);
-                min-width: 0;
-                padding-left: var(--slide-spacing);
-            }
-            @media (max-width: 900px) {
-                .embla {
-                    --slide-size: 44%;
-                }
-            }
-            @media (max-width: 640px) {
-                .embla {
-                    --slide-size: 58%;
-                }
-            }
-            .embla__scale__container {
-                width: 100%;
-                display: flex;
-                justify-content: center;
-                transform: scale(0.85);
-                transition: transform 0.35s ease;
-            }
-            .carousel-card {
-                width: 100%;
-                border-radius: 0.85rem;
-                border: 2px solid transparent;
-                padding: 0.45rem 0.45rem;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: flex-start;
-                gap: 0.25rem;
-                color: #fff;
-                background: linear-gradient(135deg, #3b82f6, #1e3a8a);
-                box-shadow: 0 12px 26px rgba(15, 23, 42, 0.25);
-                cursor: pointer;
-                transition: border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-                min-height: 120px;
-                max-height: 120px;
-            }
-            .carousel-card:hover {
-                opacity: 0.93;
-            }
-            .carousel-card:focus {
-                outline: none;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.45);
-            }
-            .carousel-card__image {
-                width: 100%;
-                height: 52px;
-                object-fit: cover;
-                border-radius: 0.65rem;
-                box-shadow: 0 6px 16px rgba(15, 23, 42, 0.35);
-            }
-            .carousel-card__label {
-                font-size: 0.7rem;
-                font-weight: 600;
-                text-align: center;
-                line-height: 1.25;
-                padding: 0 0.2rem;
-                max-height: 32px;
-                overflow: hidden;
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
-            }
-            .embla__scale__container.carousel-slide--active .carousel-card {
-                border-color: rgba(255, 255, 255, 0.9);
-                box-shadow: 0 16px 30px rgba(15, 23, 42, 0.35);
-            }
-            .embla__controls {
-                display: grid;
-                grid-template-columns: auto 1fr;
-                align-items: center;
-                gap: 0.9rem;
-                margin-top: 1rem;
-            }
-            .embla__buttons {
-                display: grid;
-                grid-template-columns: repeat(2, 2.6rem);
-                gap: 0.5rem;
-            }
-            .embla__button {
-                -webkit-appearance: none;
-                appearance: none;
-                background: transparent;
-                border: 0;
-                width: 2.6rem;
-                height: 2.6rem;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                color: rgba(226, 232, 240, 0.85);
-                box-shadow: inset 0 0 0 2px rgba(148, 163, 184, 0.6);
-                transition: color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-            }
-            .embla__button:hover:not([disabled]) {
-                background: rgba(59, 130, 246, 0.15);
-                color: #fff;
-            }
-            .embla__button:focus {
-                outline: none;
-                box-shadow: inset 0 0 0 2px rgba(59, 130, 246, 0.55);
-            }
-            .embla__button[disabled] {
-                opacity: 0.35;
-                cursor: default;
-            }
-            .embla__button__svg {
-                width: 40%;
-                height: 40%;
-            }
-            .embla__progress {
-                position: relative;
-                width: 100%;
-                height: 0.4rem;
-                border-radius: 9999px;
-                background: rgba(148, 163, 184, 0.35);
-                overflow: hidden;
-            }
-            .embla__progress__bar {
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                border-radius: inherit;
-                background: linear-gradient(135deg, #4CAF50, #22c55e);
-                transform: translate3d(0,0,0);
-                transition: transform 0.12s linear;
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    window.StoryMapComponents.ProjectCarousel = function ProjectCarousel({ projects, allProjects, onSelect, selectedId }) {
-        ensureStyles();
+    window.StoryMapComponents.ProjectCarousel = function ProjectCarousel({ projects, onSelect, selectedId }) {
 
         const viewportRef = useRef(null);
         const emblaRef = useRef(null);
@@ -341,12 +179,14 @@ function setupProgressBar(embla, progressNode) {
             }
         }, [selectedId, projects]);
 
-        return React.createElement('div', { className: 'embla cursor-pointer' },
+        return React.createElement('div', { className: 'embla carousel' },
             React.createElement('div', { className: 'embla__viewport', ref: viewportRef },
                 React.createElement('div', { className: 'embla__container' },
                     projects.map((proj) => {
-                        const projectIndex = allProjects ? allProjects.findIndex(p => p.id === proj.id) : 0;
-                        const gradientStyle = colorUtils.getGradientStyle(projectIndex >= 0 ? projectIndex : 0);
+                        // Use category color if available, otherwise fallback to index-based gradient
+                        const category = proj.raw?.ProjectCategory;
+                        const categoryColors = colorUtils.getCategoryColor(category);
+                        const gradientStyle = { background: categoryColors.gradient };
                         const isActive = selectedId === proj.id;
 
                         return React.createElement('div', {

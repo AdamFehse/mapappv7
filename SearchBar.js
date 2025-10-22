@@ -28,43 +28,37 @@
 
         const hasSelection = selected.length > 0;
 
-        return React.createElement('div', { ref: dropdownRef, className: 'relative' },
+        return React.createElement('div', { ref: dropdownRef, className: 'filter-dropdown' },
             // Dropdown button
             React.createElement('button', {
                 onClick: () => setIsOpen(!isOpen),
-                className: `px-3 py-2 rounded-lg border-2 transition-colors flex items-center gap-1 text-sm ${
-                    hasSelection
-                        ? 'border-blue-600 bg-blue-50 text-blue-900 font-semibold'
-                        : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
-                }`
+                type: 'button',
+                className: `filter-dropdown__button${hasSelection ? ' is-active' : ''}`
             },
                 React.createElement('span', {}, icon),
                 React.createElement('span', {}, label),
                 selected.length > 0 && React.createElement('span', {
-                    className: 'ml-1 bg-blue-600 text-white px-1.5 rounded-full text-xs font-bold'
+                    className: 'filter-dropdown__badge'
                 }, selected.length)
             ),
 
             // Dropdown menu (conditionally rendered)
             isOpen && React.createElement('div', {
-                className: 'absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-50 min-w-max'
+                className: 'filter-dropdown__menu'
             },
-                React.createElement('div', { className: 'p-2 max-h-64 overflow-y-auto' },
-                    options.length > 0
-                        ? options.map(option => React.createElement('label', {
-                            key: option,
-                            className: 'flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded cursor-pointer text-sm'
-                        },
-                            React.createElement('input', {
-                                type: 'checkbox',
-                                checked: selected.includes(option),
-                                onChange: () => toggleOption(option),
-                                className: 'w-4 h-4'
-                            }),
-                            React.createElement('span', {}, option)
-                        ))
-                        : React.createElement('div', { className: 'px-3 py-2 text-gray-500 text-sm' }, 'No options')
-                )
+                options.length > 0
+                    ? options.map(option => React.createElement('label', {
+                        key: option,
+                        className: 'filter-dropdown__option'
+                    },
+                        React.createElement('input', {
+                            type: 'checkbox',
+                            checked: selected.includes(option),
+                            onChange: () => toggleOption(option)
+                        }),
+                        React.createElement('span', {}, option)
+                    ))
+                    : React.createElement('div', { className: 'filter-dropdown__empty muted' }, 'No options')
             )
         );
     }
@@ -85,20 +79,14 @@
 
         // Extract unique categories, themes, products from all projects
         const filterOptions = useMemo(() => {
-            const categories = new Set();
-            const themes = new Set();
-            const products = new Set();
-
-            allProjects.forEach(p => {
-                if (p.raw?.ProjectCategory) categories.add(p.raw.ProjectCategory);
-                if (p.raw?.Theme) themes.add(p.raw.Theme);
-                if (p.raw?.Product) products.add(p.raw.Product);
-            });
-
+            const filterUtils = window.ProjectFilter;
+            if (!filterUtils) {
+                return { categories: [], themes: [], products: [] };
+            }
             return {
-                categories: Array.from(categories).sort(),
-                themes: Array.from(themes).sort(),
-                products: Array.from(products).sort()
+                categories: filterUtils.getCategories(allProjects),
+                themes: filterUtils.getThemes(allProjects),
+                products: filterUtils.getProducts(allProjects)
             };
         }, [allProjects]);
 
@@ -137,9 +125,9 @@
         const isSearchFiltered = value.trim().length > 0;
         const hasActiveFilters = activeFilters.categories.length > 0 || activeFilters.themes.length > 0 || activeFilters.products.length > 0;
 
-        return React.createElement('div', { className: 'space-y-3' },
+        return React.createElement('div', { className: 'search-panel' },
             // Filter dropdowns in a compact row
-            React.createElement('div', { className: 'flex gap-2 items-center flex-wrap' },
+            React.createElement('div', { className: 'search-panel__filters' },
                 // Category filter
                 React.createElement(FilterDropdown, {
                     label: 'Category',
@@ -170,28 +158,31 @@
                 // Clear all button (only show if filters active)
                 hasActiveFilters && React.createElement('button', {
                     onClick: handleClearAllFilters,
-                    className: 'px-2 py-2 text-xs text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors'
+                    type: 'button',
+                    className: 'filter-dropdown__clear'
                 }, '✕ Clear')
             ),
 
             // Search input
-            React.createElement('div', { className: 'relative' },
+            React.createElement('div', { className: 'search-panel__field' },
                 React.createElement('input', {
                     type: 'text',
                     value: value,
                     onChange: handleChange,
                     placeholder: 'Search projects...',
-                    className: 'w-full px-4 py-2 pr-20 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-300 focus:outline-none'
+                    className: 'search-panel__input',
+                    'aria-label': 'Search projects'
                 }),
                 // Clear button (only show when there's text)
                 isSearchFiltered && React.createElement('button', {
                     onClick: handleClear,
-                    className: 'absolute right-2 top-1/2 transform -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded transition-colors',
+                    type: 'button',
+                    className: 'search-panel__clear',
                     title: 'Clear search'
                 }, '✕'),
                 // Result count below search bar
-                showCount && React.createElement('div', {
-                    className: 'text-xs text-gray-600 mt-1 px-1'
+                showCount && React.createElement('p', {
+                    className: 'search-panel__count'
                 }, isSearchFiltered || hasActiveFilters
                     ? `Showing ${resultCount} of ${totalCount} projects`
                     : `${totalCount} projects total`

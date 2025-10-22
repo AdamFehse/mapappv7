@@ -2,33 +2,62 @@
 (function() {
     window.StoryMapComponents = window.StoryMapComponents || {};
 
-    // Create popup HTML - minimal preview style
+    // Create engaging popup HTML with quick facts and view details button
     function createPopup(proj, colorGradient) {
         const image = proj.raw?.ImageUrl || proj.image;
+        const raw = proj.raw || {};
 
         return `
-            <div class="rounded-lg overflow-hidden" style="min-width:220px;max-width:280px;background:${colorGradient};">
-                ${image ? `<img src="${image}" alt="${proj.name}" class="w-full h-24 object-cover"/>` : ''}
-                <div class="p-2.5 text-white">
-                    <div class="font-bold text-sm mb-1.5 line-clamp-2">${proj.name || ''}</div>
-                    <div class="space-y-1 text-xs opacity-90">
-                        ${proj.raw?.ProjectCategory ? `<div class="inline-block px-2 py-0.5 bg-white/20 rounded-full font-semibold">${proj.raw.ProjectCategory}</div>` : ''}
-                        ${proj.raw?.Theme ? `<div class="text-xs opacity-80">${proj.raw.Theme}</div>` : ''}
-                        ${proj.raw?.Location ? `<div class="text-xs opacity-75">📍 ${proj.raw.Location}</div>` : ''}
+            <article class="popup-card" style="background:${colorGradient};">
+                ${image ? `<img src="${image}" alt="${proj.name}" class="popup-card__cover"/>` : ''}
+                <div class="popup-card__body">
+                    <div class="popup-card__title clamp-2">${proj.name || ''}</div>
+                    ${raw.ProjectCategory ? `
+                        <div class="popup-card__badge">
+                            🏷️ ${raw.ProjectCategory}
+                        </div>
+                    ` : ''}
+                    <div class="popup-card__facts">
+                        ${raw.Location ? `
+                            <div class="popup-card__fact">
+                                <span>📍</span>
+                                <span class="clamp-2">${raw.Location}</span>
+                            </div>
+                        ` : ''}
+                        ${raw.Year ? `
+                            <div class="popup-card__fact">
+                                <span>📅</span>
+                                <span>${raw.Year}</span>
+                            </div>
+                        ` : ''}
+                        ${raw.Theme ? `
+                            <div class="popup-card__fact">
+                                <span>🎨</span>
+                                <span class="clamp-1">${raw.Theme}</span>
+                            </div>
+                        ` : ''}
+                        ${raw.Product ? `
+                            <div class="popup-card__fact">
+                                <span>⚙️</span>
+                                <span class="clamp-1">${raw.Product}</span>
+                            </div>
+                        ` : ''}
                     </div>
+                    ${raw.DescriptionShort ? `
+                        <p class="popup-card__description clamp-3">${raw.DescriptionShort}</p>
+                    ` : ''}
+                    <button class="popup-card__button popup-view-details-btn" type="button">
+                        📖 View Full Details
+                    </button>
                 </div>
-            </div>
+            </article>
         `;
     }
 
-    // Get color based on project category
+    // Get color from centralized palette (ColorUtils.js)
     function getCategoryColor(category) {
-        const categoryColors = {
-            'Art-Based Projects': { gradient: 'linear-gradient(135deg, #FF6B6B 0%, #FF5252 100%)', border: '#FF4444', light: '#FFE5E5' },
-            'Research Projects': { gradient: 'linear-gradient(135deg, #4ECDC4 0%, #2DB8AA 100%)', border: '#1DA39F', light: '#E0F7F6' },
-            'Education and Community Outreach': { gradient: 'linear-gradient(135deg, #FFE66D 0%, #FDD835 100%)', border: '#FBC02D', light: '#FFFEF0' }
-        };
-        return categoryColors[category] || { gradient: 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)', border: '#3b82f6', light: '#E0E7FF' };
+        const colorUtils = window.ColorUtils;
+        return colorUtils ? colorUtils.getCategoryColor(category) : { gradient: 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)', border: '#3b82f6', light: '#E0E7FF' };
     }
 
     // Create a Leaflet marker for a project
@@ -52,25 +81,55 @@
             borderColor = colorUtils ? colorUtils.getStartColor(index) : '#3b82f6';
         }
 
-        const options = proj.image ? {
-            icon: L.icon({
-                iconUrl: proj.image,
-                iconSize: [40, 40],
-                iconAnchor: [20, 40],
-                popupAnchor: [0, -36],
-                className: `border-2 shadow-lg rounded-full object-contain bg-white`,
-                // Use inline style for colored border
-                html: `<img src="${proj.image}" class="w-full h-full rounded-full object-cover" style="border:3px solid ${borderColor}"/>`
-            })
-        } : {};
+        const lat = proj.raw.Latitude;
+        const lng = proj.raw.Longitude;
 
-        const marker = L.marker([proj.raw.Latitude, proj.raw.Longitude], options);
+        const icon = proj.image
+            ? L.divIcon({
+                html: `
+                    <span class="project-marker project-marker--image" style="--marker-border:${borderColor};">
+                        <img src="${proj.image}" alt="${proj.name || 'Project marker'}" class="project-marker__image"/>
+                    </span>
+                `,
+                className: 'project-marker-wrapper',
+                iconSize: [46, 46],
+                iconAnchor: [23, 46],
+                popupAnchor: [0, -40]
+            })
+            : L.divIcon({
+                html: `
+                    <span class="project-marker project-marker--dot" style="--marker-border:${borderColor};background:${gradientCSS};"></span>
+                `,
+                className: 'project-marker-wrapper',
+                iconSize: [28, 28],
+                iconAnchor: [14, 28],
+                popupAnchor: [0, -24]
+            });
+
+        const marker = L.marker([lat, lng], { icon });
         marker.bindPopup(createPopup(proj, gradientCSS));
 
-        // Add click handler to update app state when marker is clicked
+        // Add click handler to update app state when marker or popup button is clicked
         if (typeof onMarkerClick === 'function') {
             marker.on('click', () => {
                 onMarkerClick(proj);
+            });
+
+            // Attach handler to popup content when it opens
+            marker.on('popupopen', () => {
+                const popup = marker.getPopup();
+                if (popup) {
+                    // Small delay to ensure DOM is ready
+                    setTimeout(() => {
+                        const btn = popup._contentNode?.querySelector('.popup-view-details-btn');
+                        if (btn) {
+                            btn.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                onMarkerClick(proj);
+                            });
+                        }
+                    }, 0);
+                }
             });
         }
 
@@ -91,8 +150,8 @@
             maxClusterRadius: 60, // Smaller cluster radius for better separation (was 80)
             spiderfyDistanceMultiplier: 1.5, // More spread when spiderfying
             iconCreateFunction: cluster => L.divIcon({
-                html: `<span class='font-bold text-lg text-white'>${cluster.getChildCount()}</span>`,
-                className: 'bg-blue-600 flex items-center justify-center rounded-full shadow-lg',
+                html: `<span>${cluster.getChildCount()}</span>`,
+                className: 'cluster-icon',
                 iconSize: [40, 40]
             })
         });

@@ -1,21 +1,25 @@
 {
   "name": "story-map-app",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
-  "description": "Interactive Story Map with React and Leaflet",
+  "description": "Interactive Story Map with React and Leaflet (CDN-based, no build required)",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "note": "This project uses CDN libraries only. No build step required - open index.html in a web server."
   },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "leaflet": "^1.9.4",
-    "leaflet.markercluster": "^1.5.3"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AdamFehse/mapappv7"
   },
+  "keywords": [
+    "story-map",
+    "interactive-map",
+    "leaflet",
+    "react",
+    "cdn"
+  ],
+  "author": "Adam Fehse",
+  "license": "MIT",
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.0.0"
+    "note": "Dependencies are loaded from CDN in index.html. Install devDeps only if you need to process the project locally."
   }
 }

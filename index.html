@@ -6,10 +6,12 @@
   <title>Story Map App</title>
   
   <!-- Styles -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="./styles/pico-overrides.css" />
+  <link rel="stylesheet" href="./styles/project-carousel.css" />
   
   <!-- Libraries -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -28,6 +30,7 @@
   <!-- Sidebar Components (modular) -->
   <script src="./ProjectDetail.js"></script>
   <script src="./ProjectCarousel.js"></script>
+  <script src="./ProjectCard.js"></script>
   <script src="./SearchBar.js"></script>
   <script src="./Sidebar.js"></script>
   <!-- Centralized filter logic (must be before App.js) -->

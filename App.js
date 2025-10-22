@@ -18,12 +18,25 @@
         const Sidebar = window.StoryMapComponents.Sidebar;
         const DraggableSplit = window.StoryMapComponents.DraggableSplit;
 
+        // Utility functions for URL routing
+        const urlRouter = useMemo(() => ({
+            parseProjectId: () => {
+                const match = window.location.hash.match(/^#project\/(.+)$/);
+                return match ? match[1] : null;
+            },
+            navigateToProject: (projectId) => {
+                window.history.pushState({ projectId }, '', `#project/${projectId}`);
+            },
+            navigateHome: () => {
+                window.history.pushState(null, '', window.location.pathname);
+            }
+        }), []);
+
         // URL routing: Handle hash changes and browser back button
         useEffect(() => {
             function handleHashChange() {
-                const hash = window.location.hash;
-                if (hash.startsWith('#project/')) {
-                    const projectId = hash.replace('#project/', '');
+                const projectId = urlRouter.parseProjectId();
+                if (projectId) {
                     const project = projects.find(p => p.id === projectId);
                     if (project) {
                         setSelected(project);
@@ -43,7 +56,7 @@
             // Listen for hash changes (browser back/forward buttons)
             window.addEventListener('hashchange', handleHashChange);
             return () => window.removeEventListener('hashchange', handleHashChange);
-        }, [projects]);
+        }, [projects, urlRouter]);
 
         // Centralized filtering using ProjectFilter.js
         const filtered = useMemo(() => {
@@ -71,9 +84,9 @@
         }, []);
 
         if (loading) {
-            return React.createElement('div',
-                { className: 'flex items-center justify-center h-screen text-xl' },
-                'Loading projects...'
+            return React.createElement('main',
+                { className: 'app-shell app-shell--loading' },
+                React.createElement('div', { className: 'loading-card' }, 'Loading projects...')
             );
         }
 
@@ -83,17 +96,13 @@
             if (mapApiRef.current?.showProject) {
                 mapApiRef.current.showProject(project);
             }
-            // Update URL hash for shareable links (pushState enables browser back button)
-            if (project) {
-                window.history.pushState({ projectId: project.id }, '', `#project/${project.id}`);
-            }
+            urlRouter.navigateToProject(project.id);
         }
 
         // Handle deselection - clear everything
         function handleDeselectProject() {
             setSelected(null);
-            // Clear URL hash (pushState to work with back button)
-            window.history.pushState(null, '', window.location.pathname);
+            urlRouter.navigateHome();
         }
 
         // Store the map's showProject function
@@ -128,13 +137,13 @@
             });
         }
 
-        return React.createElement('div', 
-            { className: 'h-screen p-2 sm:p-4 bg-gray-100' },
+        return React.createElement('main', 
+            { className: 'app-shell' },
             React.createElement(DraggableSplit, {
-                className: 'gap-2 sm:gap-4',
+                className: 'app-shell__split',
                 initialPrimary: 0.6,
                 onPrimaryResize: handleSplitResize,
-                primary: React.createElement('div', { className: 'flex-1 h-full' },
+                primary: React.createElement('section', { className: 'split-pane__content' },
                     React.createElement(MapContainer, {
                         projects: filtered,
                         allProjects: projects,
@@ -144,7 +153,7 @@
                         onMarkerClick: handleSelectProject
                     })
                 ),
-                secondary: React.createElement('div', { className: 'flex-1 min-h-0 h-full' },
+                secondary: React.createElement('aside', { className: 'split-pane__content sidebar' },
                     React.createElement(Sidebar, {
                         projects: visibleProjects.length ? visibleProjects : filtered,
                         allProjects: projects, // Pass all projects for color index calculation

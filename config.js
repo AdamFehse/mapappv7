@@ -12,12 +12,17 @@
     window.mapConfig = CONFIG;
     window.projectData = [];
 
-    // Load project data
+    // Load project data from remote source
     fetch(CONFIG.dataUrl)
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`Failed to fetch project data (${res.status})`);
+            }
+            return res.json();
+        })
         .then(data => {
             window.projectData = data.map((proj) => ({
-                id: proj.id,  // Use the id directly from the data file
+                id: proj.id,
                 name: proj.ProjectName || '',
                 description: proj.DescriptionShort || proj.DescriptionLong || '',
                 image: proj.ImageUrl || '',
@@ -25,5 +30,7 @@
             }));
             window.dispatchEvent(new Event('projectDataLoaded'));
         })
-        .catch(err => console.error('Failed to load project data:', err));
+        .catch(err => {
+            console.error('Failed to load project data:', err);
+        });
 })();
