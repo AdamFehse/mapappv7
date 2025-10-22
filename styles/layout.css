@@ -1,0 +1,116 @@
+.app-shell {
+  min-height: 100%;
+  height: 100vh;
+  padding: var(--app-spacing);
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-spacing);
+}
+
+.app-shell__split {
+  flex: 1;
+  min-height: 0;
+}
+
+.app-shell--loading {
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-card {
+  padding: 2rem 3rem;
+  border-radius: var(--panel-radius);
+  background: var(--surface-card);
+  box-shadow: var(--panel-shadow);
+  font-size: 1.25rem;
+}
+
+.split-layout {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  gap: var(--app-spacing);
+}
+
+.split-layout--column {
+  flex-direction: column;
+}
+
+.split-layout--row {
+  flex-direction: row;
+}
+
+.split-pane {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.split-pane > * {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.split-pane__content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--app-spacing) * 0.85);
+}
+
+.split-pane-primary,
+.split-pane-secondary {
+  flex: 1;
+}
+
+.split-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  background: var(--split-handle-track);
+  transition: background 0.2s ease;
+}
+
+.split-handle::after {
+  content: "";
+  display: inline-block;
+  background: var(--split-handle-thumb);
+  border-radius: var(--split-handle-radius);
+}
+
+.split-handle:hover {
+  background: var(--split-handle-track-hover);
+}
+
+.split-handle:active {
+  background: var(--split-handle-track-active);
+}
+
+.split-layout--column .split-handle {
+  cursor: row-resize;
+  height: var(--split-handle-size);
+  width: 100%;
+}
+
+.split-layout--column .split-handle::after {
+  width: 3.5rem;
+  height: calc(var(--split-handle-size) / 2.3);
+}
+
+.split-layout--row .split-handle {
+  cursor: col-resize;
+  width: var(--split-handle-size);
+  height: 100%;
+}
+
+.split-layout--row .split-handle::after {
+  width: calc(var(--split-handle-size) / 2.3);
+  height: 3.5rem;
+}

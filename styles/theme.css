@@ -1,0 +1,49 @@
+:root {
+  color-scheme: light dark;
+
+  --app-spacing: clamp(0.9rem, 1vw + 0.6rem, 1.6rem);
+  --split-handle-size: 0.65rem;
+  --split-handle-radius: 999rem;
+  --panel-radius: 1rem;
+
+  /* Surface + text tokens (fallbacks lean on Pico variables) */
+  --surface-bg: var(--pico-body-background, var(--pico-background-color));
+  --surface-card: var(--pico-card-background-color, var(--pico-background-color));
+  --surface-elevated: var(--pico-elevated-background, var(--pico-card-background-color, #fff));
+  --surface-border: var(--pico-border-color, rgba(148, 163, 184, 0.18));
+
+  --surface-text: var(--pico-color, #0f172a);
+  --surface-text-muted: var(--pico-muted-color, #64748b);
+  --surface-text-inverse: var(--pico-color-inverse, #f8fafc);
+
+  --surface-overlay: rgba(15, 23, 42, 0.12);
+  --surface-overlay-strong: rgba(15, 23, 42, 0.18);
+
+  /* Split handle colors derive from surface overlays */
+  --split-handle-track: var(--surface-overlay);
+  --split-handle-track-hover: var(--surface-overlay-strong);
+  --split-handle-track-active: rgba(15, 23, 42, 0.24);
+  --split-handle-thumb: rgba(15, 23, 42, 0.55);
+
+  --legend-shadow: 0 0.75rem 2rem rgba(15, 23, 42, 0.2);
+  --panel-shadow: 0 1.25rem 2.5rem rgba(15, 23, 42, 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface-overlay: rgba(148, 163, 184, 0.22);
+    --surface-overlay-strong: rgba(148, 163, 184, 0.32);
+    --split-handle-track-active: rgba(148, 163, 184, 0.38);
+    --split-handle-thumb: rgba(226, 232, 240, 0.55);
+    --legend-shadow: 0 0.75rem 2rem rgba(2, 6, 23, 0.55);
+    --panel-shadow: 0 1.25rem 2.5rem rgba(2, 6, 23, 0.45);
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  background: var(--surface-bg);
+  color: var(--surface-text);
+}

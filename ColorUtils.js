@@ -23,7 +23,7 @@
             { start: '#ef4444', end: '#ec4899', name: 'red-pink' }     // red-500 to pink-600
         ],
 
-        // Get CSS gradient string for inline styles (popups, markers)
+        // Get CSS gradient string for inline styles (popups)
         getGradientCSS: function(index) {
             const gradient = this.gradients[index % this.gradients.length];
             return `linear-gradient(135deg, ${gradient.start} 0%, ${gradient.end} 100%)`;
@@ -37,7 +37,7 @@
             };
         },
 
-        // Get start color for single color needs (marker borders)
+        // Get start color for single color needs
         getStartColor: function(index) {
             return this.gradients[index % this.gradients.length].start;
         },

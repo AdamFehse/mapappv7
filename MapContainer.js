@@ -1,4 +1,4 @@
-// MapContainer.js - Leaflet map with marker clustering and project selection
+// MapContainer.js - Leaflet map with project selection
 (function() {
     const { useEffect, useRef } = React;
     window.StoryMapComponents = window.StoryMapComponents || {};
@@ -14,10 +14,10 @@
         // Refs for map elements
         const mapRef = useRef(null);
         const leafletMapRef = useRef(null);
-        const clusterRef = useRef(null);
         const markersRef = useRef([]);
+        const markersByIdRef = useRef({});  // Map project IDs to markers for efficient diffing
         const lastVisibleProjects = useRef([]);
-        const { createMarker, createClusterGroup } = window.StoryMapComponents.MapUtils;
+        const { createMarker } = window.StoryMapComponents.MapUtils;
 
         // Initialize map
         useEffect(() => {
@@ -75,7 +75,6 @@
         // Function to show a project on the map
         const showProject = useRef((project) => {
             const map = leafletMapRef.current;
-            const cluster = clusterRef.current;
 
             if (!map || !project?.raw) return;
 
@@ -90,21 +89,6 @@
             });
 
             if (!marker) return;
-
-            // Check if marker is in a cluster
-            if (cluster && cluster.hasLayer(marker)) {
-                const parentCluster = cluster.getVisibleParent(marker);
-                if (parentCluster && parentCluster !== marker) {
-                    // Marker is clustered - zoom to show it and open popup
-                    cluster.zoomToShowLayer(marker, () => {
-                        // After zoom completes, open popup
-                        setTimeout(() => {
-                            marker.openPopup();
-                        }, 100);
-                    });
-                    return;
-                }
-            }
 
             // Marker is visible - check if it's already in view at a good zoom
             const currentZoom = map.getZoom();
@@ -128,40 +112,37 @@
             });
         });
 
-        // Update markers when projects change
+        // Update markers when projects change (with intelligent diffing)
         useEffect(() => {
             const map = leafletMapRef.current;
             if (!map) return;
 
-            // Clear existing markers
-            if (clusterRef.current) {
-                map.removeLayer(clusterRef.current);
-                clusterRef.current = null;
-            }
-            markersRef.current = [];
+            const previousMarkerIds = new Set(Object.keys(markersByIdRef.current));
+            const currentProjectIds = new Set(projects.map(p => p.id));
 
-            // Create new cluster group and add markers
-            const cluster = createClusterGroup();
-            if (cluster) {
-                projects.forEach((proj) => {
-                    const marker = createMarker(proj, allProjects, onMarkerClick);
-                    if (marker) {
-                        cluster.addLayer(marker);
-                        markersRef.current.push(marker);
+            // Remove markers for projects no longer in the filtered list
+            previousMarkerIds.forEach(id => {
+                if (!currentProjectIds.has(id)) {
+                    const marker = markersByIdRef.current[id];
+                    if (map.hasLayer(marker)) {
+                        map.removeLayer(marker);
                     }
-                });
-                cluster.addTo(map);
-                clusterRef.current = cluster;
-            } else {
-                // Fallback without clustering
-                projects.forEach((proj) => {
-                    const marker = createMarker(proj, allProjects, onMarkerClick);
+                    delete markersByIdRef.current[id];
+                }
+            });
+
+            // Add new markers for projects not previously displayed
+            projects.forEach((proj) => {
+                if (!markersByIdRef.current[proj.id]) {
+                    const marker = createMarker(proj, onMarkerClick);
                     if (marker) {
+                        markersByIdRef.current[proj.id] = marker;
                         marker.addTo(map);
-                        markersRef.current.push(marker);
                     }
-                });
-            }
+                }
+            });
+
+            markersRef.current = Object.values(markersByIdRef.current);
 
             // Initial visible projects
             setTimeout(() => {
@@ -184,15 +165,21 @@
                         const lat = p.raw?.Latitude, lng = p.raw?.Longitude;
                         return lat && lng && bounds.contains([lat, lng]);
                     });
-                    // Only update if changed
-                    if (JSON.stringify(visible.map(p=>p.id)) !== JSON.stringify(lastVisibleProjects.current.map(p=>p.id))) {
+                    // Use Set comparison instead of JSON.stringify for better performance
+                    const lastIds = new Set(lastVisibleProjects.current.map(p => p.id));
+                    const visibleIds = new Set(visible.map(p => p.id));
+                    const hasChanged = lastIds.size !== visibleIds.size ||
+                                     [...lastIds].some(id => !visibleIds.has(id));
+                    if (hasChanged) {
                         lastVisibleProjects.current = visible;
                         onVisibleProjectsChange(visible);
                     }
                 };
-                map.on('moveend zoomend', updateVisible);
+                map.on('moveend', updateVisible);
+                map.on('zoomend', updateVisible);
                 return () => {
-                    map.off('moveend zoomend', updateVisible);
+                    map.off('moveend', updateVisible);
+                    map.off('zoomend', updateVisible);
                 };
             }
         }, [projects]);
@@ -213,33 +200,12 @@
             });
         }, [onMapReady, projects.length]);
 
-        return React.createElement('section', {
-            className: 'map-wrapper'
-        },
-            // Map container
+        return React.createElement('section', { className: 'map-wrapper' },
             React.createElement('div', {
                 ref: mapRef,
                 className: 'map-frame',
                 style: { minHeight: '200px' }
-            }),
-
-            // Legend overlay - uses centralized category colors from ColorUtils
-            React.createElement('div', {
-                className: 'map-legend'
-            },
-                React.createElement('p', { className: 'map-legend__title' }, 'Project Categories'),
-                React.createElement('ul', { className: 'map-legend__list' },
-                    Object.entries(window.ColorUtils?.categoryColors || {}).map(([key, colors]) =>
-                        React.createElement('li', { key, className: 'map-legend__item' },
-                            React.createElement('div', {
-                                className: 'map-legend__swatch',
-                                style: { background: colors.border }
-                            }),
-                            React.createElement('span', {}, colors.short)
-                        )
-                    )
-                )
-            )
+            })
         );
     };
 })();

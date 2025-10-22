@@ -1,4 +1,4 @@
-// Sidebar.js - Main sidebar layout with inline project detail panel
+// Sidebar.js - Main sidebar layout with search, legend, carousel, and project list
 // Components: ProjectCard.js, ProjectCarousel.js, SearchBar.js
 (function() {
     window.StoryMapComponents = window.StoryMapComponents || {};
@@ -14,47 +14,58 @@
 
         return React.createElement('div',
             { className: 'sidebar' },
-            // Detail panel (fills remaining height, scrollable)
-            React.createElement('article',
-                { className: 'sidebar__panel sidebar__detail' },
-                React.createElement(window.StoryMapComponents.ProjectDetail, {
-                    project: selected,
-                    onDeselect: onDeselect
-                })
-            ),
-            // Search bar with result count
+            // Search + Filters panel (top, compact)
             React.createElement('section',
-                { className: 'sidebar__panel sidebar__panel--padded' },
-                React.createElement(window.StoryMapComponents.SearchBar, {
-                    onSearch: onSearch,
-                    onFiltersChange: onFiltersChange,
-                    resultCount: resultCount,
-                    totalCount: totalCount,
-                    allProjects: allProjects
-                })
+                { className: 'sidebar__panel sidebar__controls' },
+                // Search + Filters row
+                React.createElement('div', { className: 'sidebar__search-legend' },
+                    React.createElement('div', { className: 'sidebar__search-area' },
+                        React.createElement(window.StoryMapComponents.SearchBar, {
+                            onSearch: onSearch,
+                            onFiltersChange: onFiltersChange,
+                            resultCount: resultCount,
+                            totalCount: totalCount,
+                            allProjects: allProjects
+                        })
+                    )
+                )
             ),
-            // Carousel panel (fixed, below search)
+            // Carousel panel (visual browsing)
             React.createElement('section',
-                { className: 'sidebar__panel sidebar__carousel' },
+                { className: 'sidebar__panel sidebar__browse' },
+                // Carousel (scrollable)
+                React.createElement('div', { className: 'sidebar__carousel-browse' },
                     React.createElement(window.StoryMapComponents.ProjectCarousel, {
                         projects: projects,
                         onSelect: handleSelectProject,
                         selectedId: selected?.id
                     })
-            ),
-            // Project cards list (scrollable)
-            React.createElement('section',
-                { className: 'sidebar__panel sidebar__list' },
-                projects.length > 0 ? projects.map(proj =>
-                    React.createElement(window.StoryMapComponents.ProjectCard, {
-                        key: proj.id,
-                        project: proj,
-                        onClick: handleSelectProject,
-                        isSelected: selected?.id === proj.id
-                    })
-                ) : React.createElement('div', { className: 'empty-state' },
-                    'No projects match your search'
                 )
+            ),
+            // Main region swaps between detail view and project list
+            React.createElement('section',
+                { className: 'sidebar__panel sidebar__main' },
+                selected
+                    ? React.createElement(window.StoryMapComponents.ProjectDetail, {
+                        project: selected,
+                        onDeselect: onDeselect
+                    })
+                    : (
+                        projects.length > 0
+                            ? React.createElement('div', { className: 'sidebar__list' },
+                                projects.map(proj =>
+                                    React.createElement(window.StoryMapComponents.ProjectCard, {
+                                        key: proj.id,
+                                        project: proj,
+                                        onClick: handleSelectProject,
+                                        isSelected: selected?.id === proj.id
+                                    })
+                                )
+                            )
+                            : React.createElement('div', { className: 'empty-state' },
+                                'No projects match your search'
+                            )
+                    )
             )
         );
     };

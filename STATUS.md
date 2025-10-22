@@ -9,6 +9,12 @@
 - ✅ **Legacy Code**: Removed unused ColorUtils helpers (getGradientCSSById/getGradientStyleById) and legacy single-value filter branches
 - ✅ **Filter Logic**: Consolidated to array-based filters only (categories, themes, products)
 - ✅ **Data Source**: Simplified config.js to use remote GitHub data (no fallback complexity)
+- ✅ **MapUtils Popup Events**: Refactored from setTimeout + direct listeners to event delegation with proper cleanup
+- ✅ **MapContainer Marker Diffing**: Optimized marker updates to only add/remove changed markers instead of full recreation
+  - Added `markersByIdRef` for tracking markers by project ID
+  - Removed markers only for filtered-out projects
+  - Added markers only for new projects
+  - Replaced JSON.stringify comparison with Set-based diffing for better performance
 
 ### UI/UX Improvements
 - ✅ **Layout Redesign**: Sidebar now shows search → carousel → compact project cards (instead of large detail panel)
@@ -59,8 +65,9 @@ App.js (main orchestrator)
 - **Search & Filtering**: Full-text search + multi-select dropdowns for categories, themes, products
 - **URL Sharing**: Hash-based routing (`#project/{id}`) with browser back/forward support
 - **Category Colors**: Art-Based (red), Research (teal), Education (yellow)
-- **Responsive**: Mobile-first design with Tailwind CSS
+- **Responsive**: Mobile-first design with Pico CSS framework
 - **Modal Details**: Full project info accessible without leaving sidebar
+- **Performance**: Optimized marker rendering with intelligent diffing
 
 ## Files Structure
 
@@ -157,4 +164,5 @@ git commit -m "Your message"
 ---
 
 **Last Updated**: October 22, 2025
-**Session Focus**: UI/UX redesign with modal details, color consolidation, and code cleanup
+**Latest Session**: Code cleanup - artifact pattern removal and performance optimization
+**Previous Session**: UI/UX redesign with modal details, color consolidation, and code cleanup

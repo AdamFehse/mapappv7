@@ -8,8 +8,6 @@
   <!-- Styles -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
   <link rel="stylesheet" href="./styles/pico-overrides.css" />
   <link rel="stylesheet" href="./styles/project-carousel.css" />
   
@@ -17,7 +15,6 @@
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/embla-carousel@8.1.0/embla-carousel.umd.min.js"></script>
   <script src="https://unpkg.com/embla-carousel-wheel-gestures@8.1.0/dist/embla-carousel-wheel-gestures.umd.js"></script>
   
@@ -38,7 +35,7 @@
   <script src="./App.js"></script>
 </head>
 
-<body>
+<body data-theme="auto">
   <div id="root"></div>
   <script>
     function initializeApp() {

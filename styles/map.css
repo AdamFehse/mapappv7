@@ -1,0 +1,39 @@
+.map-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.map-frame {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--panel-radius);
+  overflow: hidden;
+  box-shadow: var(--panel-shadow);
+  min-height: 200px;
+}
+
+/* Reset Pico styles on Leaflet markers */
+.leaflet-marker-icon {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* Reset Pico styles inside Leaflet popups */
+.leaflet-popup-content button,
+.leaflet-popup-content [role="button"] {
+  all: revert;
+  background: inherit;
+  border: inherit;
+  color: inherit;
+  padding: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.leaflet-container a {
+  color: inherit;
+}
