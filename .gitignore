@@ -22,6 +22,12 @@
 !storymapdata_v3.json
 !cssplan.md
 !styles/
+!ProjectCard.js
+!PLAN.md
+!STATUS.md
+!csv_to_json.py
+
+
 
 # Node and build artifacts
 node_modules/
