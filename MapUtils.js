@@ -57,24 +57,45 @@
             <div class="p-2 rounded-lg" style="min-width:200px;max-width:260px;background:${colorGradient};">
                 ${galleryHtml}
                 <div class="font-bold text-base mb-1 text-white">${proj.name || ''}</div>
+                ${proj.raw?.ProjectCategory ? `<div class="text-xs text-white opacity-85 mb-1 font-semibold">📁 ${proj.raw.ProjectCategory}</div>` : ''}
+                ${proj.raw?.Theme ? `<div class="text-xs text-white opacity-85 mb-1">🎯 ${proj.raw.Theme}</div>` : ''}
+                ${proj.raw?.Product ? `<div class="text-xs text-white opacity-85 mb-1">📦 ${proj.raw.Product}</div>` : ''}
                 <div class="text-sm text-white opacity-90 mb-1">${proj.description || ''}</div>
-                ${proj.raw?.Location ? `<div class="text-xs text-white opacity-75">${proj.raw.Location}</div>` : ''}
+                ${proj.raw?.Location ? `<div class="text-xs text-white opacity-75">📍 ${proj.raw.Location}</div>` : ''}
             </div>
         `;
+    }
+
+    // Get color based on project category
+    function getCategoryColor(category) {
+        const categoryColors = {
+            'Art-Based Projects': { gradient: 'linear-gradient(135deg, #FF6B6B 0%, #FF5252 100%)', border: '#FF4444', light: '#FFE5E5' },
+            'Research Projects': { gradient: 'linear-gradient(135deg, #4ECDC4 0%, #2DB8AA 100%)', border: '#1DA39F', light: '#E0F7F6' },
+            'Education and Community Outreach': { gradient: 'linear-gradient(135deg, #FFE66D 0%, #FDD835 100%)', border: '#FBC02D', light: '#FFFEF0' }
+        };
+        return categoryColors[category] || { gradient: 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)', border: '#3b82f6', light: '#E0E7FF' };
     }
 
     // Create a Leaflet marker for a project
     function createMarker(proj, allProjects, onMarkerClick) {
         if (!proj.raw?.Latitude || !proj.raw?.Longitude) return null;
 
-        // Find the project's index in the FULL allProjects array for consistent coloring
-        const projectIndex = allProjects ? allProjects.findIndex(p => p.id === proj.id) : 0;
-        const index = projectIndex >= 0 ? projectIndex : 0;
+        // Get color based on category (priority) or fallback to index-based gradient
+        let borderColor, gradientCSS;
+        const category = proj.raw?.ProjectCategory;
 
-        // Get the color gradient for this project
-        const colorUtils = window.ColorUtils;
-        const gradientCSS = colorUtils ? colorUtils.getGradientCSS(index) : 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)';
-        const borderColor = colorUtils ? colorUtils.getStartColor(index) : '#3b82f6';
+        if (category) {
+            const categoryStyle = getCategoryColor(category);
+            borderColor = categoryStyle.border;
+            gradientCSS = categoryStyle.gradient;
+        } else {
+            // Fallback to index-based coloring if no category
+            const projectIndex = allProjects ? allProjects.findIndex(p => p.id === proj.id) : 0;
+            const index = projectIndex >= 0 ? projectIndex : 0;
+            const colorUtils = window.ColorUtils;
+            gradientCSS = colorUtils ? colorUtils.getGradientCSS(index) : 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)';
+            borderColor = colorUtils ? colorUtils.getStartColor(index) : '#3b82f6';
+        }
 
         const options = proj.image ? {
             icon: L.icon({

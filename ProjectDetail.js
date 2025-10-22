@@ -100,16 +100,48 @@
                 }, Array.isArray(raw.DescriptionLong) ? raw.DescriptionLong.join(' ') : raw.DescriptionLong)
             ),
 
+            // Project Category, Theme, and Product (prominently displayed)
+            React.createElement(Section, { title: 'Project Overview', className: 'bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg' },
+                React.createElement('div', { className: 'flex flex-wrap gap-2 mb-3' },
+                    raw.ProjectCategory && React.createElement('span', {
+                        className: 'inline-block px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full'
+                    }, raw.ProjectCategory),
+                    raw.Theme && React.createElement('span', {
+                        className: 'inline-block px-3 py-1 bg-purple-600 text-white text-xs font-bold rounded-full'
+                    }, raw.Theme),
+                    raw.Product && React.createElement('span', {
+                        className: 'inline-block px-3 py-1 bg-green-600 text-white text-xs font-bold rounded-full'
+                    }, raw.Product)
+                ),
+                Array.isArray(raw.Tags) && raw.Tags.length > 0 && React.createElement('div', { className: 'flex flex-wrap gap-1' },
+                    React.createElement('span', { className: 'text-xs text-gray-600 font-semibold' }, 'Tags:'),
+                    raw.Tags.map(tag => React.createElement('span', {
+                        key: tag,
+                        className: 'inline-block px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded'
+                    }, tag))
+                )
+            ),
+
             // Project Info
             React.createElement(Section, { title: 'Project Information' },
-                React.createElement(InfoRow, { label: 'PI', value: raw.Name }),
-                React.createElement(InfoRow, { label: 'Title', value: raw.Title }),
+                Array.isArray(raw.ProjectLeads) && raw.ProjectLeads.length > 0 && React.createElement(InfoRow, {
+                    label: 'Project Leads',
+                    value: raw.ProjectLeads.join(', ')
+                }),
+                raw.Name && React.createElement(InfoRow, { label: 'PI', value: raw.Name }),
+                raw.Title && React.createElement(InfoRow, { label: 'Title', value: raw.Title }),
                 React.createElement(InfoRow, { label: 'Affiliation', value: raw.Affiliation }),
                 React.createElement(InfoRow, { label: 'College', value: raw.College }),
                 React.createElement(InfoRow, { label: 'Department', value: raw.Department }),
                 raw.Year && raw.Year > 0 && React.createElement(InfoRow, { label: 'Year', value: raw.Year }),
                 React.createElement(InfoRow, { label: 'Location', value: raw.Location }),
-                React.createElement(InfoRow, { label: 'Category', value: raw.ProjectCategory })
+                raw.Email && React.createElement(InfoRow, {
+                    label: 'Email',
+                    value: React.createElement('a', {
+                        href: `mailto:${raw.Email}`,
+                        className: 'text-blue-600 hover:underline'
+                    }, raw.Email)
+                })
             ),
 
             // Artworks
